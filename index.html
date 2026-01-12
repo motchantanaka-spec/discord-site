@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -50,7 +50,13 @@
             color: #00d4ff;
             border: 1px solid rgba(0, 212, 255, 0.2);
         }
+        /* Owner専用の色（少し豪華に金っぽく） */
+        .owner-card {
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            color: #ffd700;
+        }
         .admin-label { font-size: 0.7rem; color: #aaa; display: block; }
+        .owner-label { font-size: 0.7rem; color: #ffd700; display: block; font-weight: bold; }
 
         /* ルールセクション */
         .rules {
@@ -90,8 +96,8 @@
         <h1>Welcome to My Server</h1>
         
         <div class="admin-section">
+            <div class="admin-card owner-card"><span class="owner-label">Owner</span>iksuwu</div>
             <div class="admin-card"><span class="admin-label">Admin</span>jadpyasub</div>
-            <div class="admin-card"><span class="admin-label">Admin</span>iksuwu</div>
             <div class="admin-card"><span class="admin-label">Admin</span>yuzupi0583</div>
             <div class="admin-card"><span class="admin-label">Admin</span>ksi7_</div>
         </div>
@@ -113,7 +119,6 @@
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1460281744749232276/FiMDmhRwahgdD00TBpc2vjsvDRJjwbCRZVS3ivpbSqElAct1bJD550g8JRqg0MvsEccV";
 
         window.onload = function() {
-            // Webhook通知（数字なし、メッセージのみ）
             fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
