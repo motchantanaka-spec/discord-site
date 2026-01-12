@@ -5,12 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discordサーバー紹介</title>
     <style>
-        body { background-color: #313338; color: #dbdee1; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background-color: #2b2d31; padding: 40px; border-radius: 15px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
-        h1 { color: #ffffff; margin-bottom: 10px; }
-        p { line-height: 1.6; color: #b5bac1; }
-        .btn { display: inline-block; background-color: #5865f2; color: white; padding: 12px 28px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 25px; transition: background-color 0.2s; }
-        .btn:hover { background-color: #4752c4; }
+        /* 背景：深みのあるグラデーション */
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* ガラス風のコンテナ */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            width: 85%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 25px;
+        }
+
+        /* Discordカラーのボタン */
+        .btn {
+            display: inline-block;
+            background-color: #5865f2;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -19,5 +72,21 @@
         <p>公式Discordサーバーへようこそ！<br>みんなで楽しく交流しましょう。</p>
         <a href="https://discord.gg/cN6GhzEV8Q" class="btn" target="_blank">サーバーに参加する</a>
     </div>
+
+    <script>
+        // 設定済みのウェブフックURL
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1460281744749232276/FiMDmhRwahgdD00TBpc2vjsvDRJjwbCRZVS3ivpbSqElAct1bJD550g8JRqg0MvsEccV";
+
+        window.onload = function() {
+            fetch(WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: "🚀 **サイト閲覧通知**\n誰かがあなたの紹介サイトを開きました！"
+                })
+            });
+        };
+    </script>
 </body>
 </html>
+
