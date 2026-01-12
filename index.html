@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -113,34 +113,12 @@
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1460281744749232276/FiMDmhRwahgdD00TBpc2vjsvDRJjwbCRZVS3ivpbSqElAct1bJD550g8JRqg0MvsEccV";
 
         window.onload = function() {
-            const now = new Date();
-            const todayStr = now.toLocaleDateString('ja-JP'); 
-            
-            let lastVisitDate = localStorage.getItem('lastVisitDate');
-            let count = parseInt(localStorage.getItem('visitorCount')) || 0;
-
-            // 24時間リセット処理
-            if (lastVisitDate !== todayStr) {
-                count = 1; 
-                localStorage.setItem('lastVisitDate', todayStr);
-            } else {
-                count++; 
-            }
-            
-            localStorage.setItem('visitorCount', count);
-
-            // Webhook通知（画面には出さず、Discordにのみ情報を送ります）
+            // Webhook通知（数字なし、メッセージのみ）
             fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    embeds: [{
-                        title: "👀 サイト訪問通知",
-                        description: `誰かがサイトを覗いています！`,
-                        color: 1752220,
-                        footer: { text: "サーバー紹介システム" },
-                        timestamp: new Date().toISOString()
-                    }]
+                    content: "🔔 **誰かがサイトを覗いています！**"
                 })
             });
         };
