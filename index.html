@@ -13,9 +13,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         /* ガラス風のコンテナ */
@@ -25,27 +26,48 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            width: 85%;
-            max-width: 400px;
+            width: 100%;
+            max-width: 450px;
         }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #ffffff;
+        h1 { font-size: 1.6rem; margin-bottom: 15px; color: #ffffff; }
+        
+        /* 管理者リスト */
+        .admin-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-
-        p {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 25px;
+        .admin-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
+        .admin-label { font-size: 0.7rem; color: #aaa; display: block; }
 
-        /* Discordカラーのボタン */
+        /* ルールセクション */
+        .rules {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .rules h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 5px; }
+        .rules ul { margin: 0; padding-left: 20px; font-size: 0.9rem; color: #e0e0e0; }
+        .rules li { margin-bottom: 8px; }
+
+        /* カウンター表示 */
+        .visitor-count { font-size: 0.85rem; color: #00ffaa; margin-bottom: 15px; font-weight: bold; }
+
+        /* Discordボタン */
         .btn {
             display: inline-block;
             background-color: #5865f2;
@@ -55,10 +77,10 @@
             text-decoration: none;
             font-weight: bold;
             transition: 0.3s;
-            border: none;
+            width: 80%;
             cursor: pointer;
+            border: none;
         }
-
         .btn:hover {
             background-color: #4752c4;
             transform: translateY(-2px);
@@ -69,24 +91,69 @@
 <body>
     <div class="container">
         <h1>Welcome to My Server</h1>
-        <p>公式Discordサーバーへようこそ！<br>みんなで楽しく交流しましょう。</p>
+        
+        <div class="admin-section">
+            <div class="admin-card"><span class="admin-label">Admin</span>jadpyasub</div>
+            <div class="admin-card"><span class="admin-label">Admin</span>iksuwu</div>
+            <div class="admin-card"><span class="admin-label">Admin</span>yuzupi0583</div>
+            <div class="admin-card"><span class="admin-label">Admin</span>ksi7_</div>
+        </div>
+
+        <div class="rules">
+            <h2>📜 サーバー規約</h2>
+            <ul>
+                <li>相手を尊重し、仲良く交流しましょう</li>
+                <li>スパム・荒らし行為の禁止</li>
+                <li>不適切なコンテンツの投稿禁止</li>
+                <li>運営の指示に従ってください</li>
+            </ul>
+        </div>
+
+        <p id="counter-display" class="visitor-count">本日 1 人目の訪問者です！</p>
+        
         <a href="https://discord.gg/cN6GhzEV8Q" class="btn" target="_blank">サーバーに参加する</a>
     </div>
 
     <script>
-        // 設定済みのウェブフックURL
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1460281744749232276/FiMDmhRwahgdD00TBpc2vjsvDRJjwbCRZVS3ivpbSqElAct1bJD550g8JRqg0MvsEccV";
 
         window.onload = function() {
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('ja-JP'); 
+            
+            let lastVisitDate = localStorage.getItem('lastVisitDate');
+            let count = parseInt(localStorage.getItem('visitorCount')) || 0;
+
+            // 24時間リセット処理
+            if (lastVisitDate !== todayStr) {
+                count = 1; 
+                localStorage.setItem('lastVisitDate', todayStr);
+            } else {
+                count++; 
+            }
+            
+            localStorage.setItem('visitorCount', count);
+            document.getElementById('counter-display').innerText = `本日 ${count} 人目の訪問者です！`;
+
+            // 進化したWebhook通知の送信
             fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    content: "🚀 **サイト閲覧通知**\n誰かがあなたの紹介サイトを開きました！"
+                    embeds: [{
+                        title: "👀 サイト訪問通知",
+                        description: `今日は現在 **${count}人** が覗いています！`,
+                        color: 1752220,
+                        fields: [
+                            { name: "訪問順位", value: `${count}人目`, inline: true },
+                            { name: "日付", value: todayStr, inline: true }
+                        ],
+                        footer: { text: "紹介サイト見守りログ" },
+                        timestamp: new Date().toISOString()
+                    }]
                 })
             });
         };
     </script>
 </body>
 </html>
-
