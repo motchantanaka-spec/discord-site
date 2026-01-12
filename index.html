@@ -33,14 +33,14 @@
             max-width: 450px;
         }
 
-        h1 { font-size: 1.6rem; margin-bottom: 15px; color: #ffffff; }
+        h1 { font-size: 1.6rem; margin-bottom: 20px; color: #ffffff; }
         
         /* 管理者リスト */
         .admin-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         .admin-card {
             background: rgba(0, 0, 0, 0.2);
@@ -58,14 +58,11 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
             border-radius: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .rules h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 5px; }
         .rules ul { margin: 0; padding-left: 20px; font-size: 0.9rem; color: #e0e0e0; }
         .rules li { margin-bottom: 8px; }
-
-        /* カウンター表示 */
-        .visitor-count { font-size: 0.85rem; color: #00ffaa; margin-bottom: 15px; font-weight: bold; }
 
         /* Discordボタン */
         .btn {
@@ -108,8 +105,6 @@
                 <li>運営の指示に従ってください</li>
             </ul>
         </div>
-
-        <p id="counter-display" class="visitor-count">本日 1 人目の訪問者です！</p>
         
         <a href="https://discord.gg/cN6GhzEV8Q" class="btn" target="_blank">サーバーに参加する</a>
     </div>
@@ -133,22 +128,17 @@
             }
             
             localStorage.setItem('visitorCount', count);
-            document.getElementById('counter-display').innerText = `本日 ${count} 人目の訪問者です！`;
 
-            // 進化したWebhook通知の送信
+            // Webhook通知（画面には出さず、Discordにのみ情報を送ります）
             fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     embeds: [{
                         title: "👀 サイト訪問通知",
-                        description: `今日は現在 **${count}人** が覗いています！`,
+                        description: `今日は **${count}人** が覗いています！`,
                         color: 1752220,
-                        fields: [
-                            { name: "訪問順位", value: `${count}人目`, inline: true },
-                            { name: "日付", value: todayStr, inline: true }
-                        ],
-                        footer: { text: "紹介サイト見守りログ" },
+                        footer: { text: "サーバー紹介システム" },
                         timestamp: new Date().toISOString()
                     }]
                 })
