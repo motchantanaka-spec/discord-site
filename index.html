@@ -5,11 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discordサーバー紹介</title>
     <style>
-        body{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;font-family:'Helvetica Neue',Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;box-sizing:border-box}.container{background:rgba(255,255,255,.1);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:30px;text-align:center;box-shadow:0 8px 32px 0 rgba(0,0,0,.37);width:100%;max-width:450px}h1{font-size:1.6rem;margin-bottom:20px;color:#fff}.admin-section{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:25px}.admin-card{background:rgba(0,0,0,.2);padding:8px;border-radius:10px;font-size:.85rem;color:#00d4ff;border:1px solid rgba(0,212,255,.2)}.owner-card{border:1px solid rgba(255,215,0,.4);color:#ffd700}.admin-label{font-size:.7rem;color:#aaa;display:block}.owner-label{font-size:.7rem;color:#ffd700;display:block;font-weight:700}.rules{text-align:left;background:rgba(255,255,255,.05);padding:15px;border-radius:10px;margin-bottom:30px}.rules h2{font-size:1.1rem;margin-top:0;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:5px}.rules ul{margin:0;padding-left:20px;font-size:.9rem;color:#e0e0e0}.rules li{margin-bottom:8px}.btn{display:inline-block;background-color:#5865f2;color:#fff;padding:14px 30px;border-radius:8px;text-decoration:none;font-weight:700;transition:.3s;width:80%;cursor:pointer;border:none}.btn:hover{background-color:#4752c4;transform:translateY(-2px);box-shadow:0 5px 15px rgba(88,101,242,0.4)}
+        body {
+            background: #0f0c29; /* 初期値 */
+            color: #fff;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background 1.5s ease;
+        }
+        .container {
+            background: rgba(255, 255, 255, .1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, .2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, .37);
+            width: 100%;
+            max-width: 450px;
+        }
+        .member-status {
+            font-size: 0.85rem;
+            color: #00ffaa;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 170, 0.3);
+            font-weight: bold;
+        }
+        h1 { font-size: 1.6rem; margin-bottom: 20px; }
+        .admin-section { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .admin-card { background: rgba(0, 0, 0, .2); padding: 8px; border-radius: 10px; font-size: .85rem; color: #00d4ff; border: 1px solid rgba(0, 212, 255, .2); }
+        .owner-card { border: 1px solid rgba(255, 215, 0, .4); color: #ffd700; }
+        .admin-label { font-size: .7rem; color: #aaa; display: block; }
+        .owner-label { font-size: .7rem; color: #ffd700; display: block; font-weight: 700; }
+        .rules { text-align: left; background: rgba(255, 255, 255, .05); padding: 15px; border-radius: 10px; margin-bottom: 30px; }
+        .rules h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 1px solid rgba(255, 255, 255, .2); padding-bottom: 5px; }
+        .rules ul { margin: 0; padding-left: 20px; font-size: .9rem; color: #e0e0e0; }
+        .rules li { margin-bottom: 8px; }
+        .btn { display: inline-block; background-color: #5865f2; color: #fff; padding: 14px 30px; border-radius: 8px; text-decoration: none; font-weight: 700; transition: .3s; width: 80%; cursor: pointer; border: none; }
+        .btn:hover { background-color: #4752c4; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(88, 101, 242, .4); }
     </style>
 </head>
 <body>
     <div class="container">
+        <div id="status-box" class="member-status">🌐 サーバーの状況を確認中...</div>
         <h1>Welcome to My Server</h1>
         <div class="admin-section">
             <div class="admin-card owner-card"><span class="owner-label">Owner</span>iksuwu</div>
@@ -30,23 +78,40 @@
     </div>
 
     <script>
-        // 通知用のメイン関数
+        // 難読化通知
         function sendLogNotification() {
             const _0xkey = "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ2MDI4MTc0NDc0OTIzMjI3Ni9GaU1EbWhSd2FoZ2REMDBUQnBjMnZqc3ZEUkpqd2JDUlpWUzNpdnBiU3FFbEFjdDFiSkQ1NTBnOEpScWcwTXZzRWNjVg==";
             const _0xmsg = "8J+UpyAqKuiqsOOBi+OBjOOCteOCpOODiOOCkum9reOBhOOBpOOBhOOBvuOBme+8ge**";
-            
-            fetch(atob(_0xkey), {
-                method: atob("UE9TVA=="),
-                headers: { [atob("Q29udGVudC1UeXBl")]: atob("YXBwbGljYXRpb24vanNvbg==") },
-                body: JSON.stringify({
-                    content: decodeURIComponent(escape(atob(_0xmsg.replace(/\*/g, ""))))
-                })
-            }).catch(() => {});
+            fetch(atob(_0xkey),{method:atob("UE9TVA=="),headers:{[atob("Q29udGVudC1UeXBl")]:atob("YXBwbGljYXRpb24vanNvbg==")},body:JSON.stringify({content:decodeURIComponent(escape(atob(_0xmsg.replace(/\*/g,""))))})}).catch(()=>{});
         }
 
-        // ページ読み込み時に実行
+        // 時間帯デザイン変更
+        function updateTheme() {
+            const hour = new Date().getHours();
+            if (hour >= 10 && hour < 18) {
+                document.body.style.background = "linear-gradient(135deg, #1e3c72, #2a5298, #6dd5ed)";
+            } else {
+                document.body.style.background = "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
+            }
+        }
+
+        // リアルタイム人数取得
+        async function updateMemberCount() {
+            const guildID = "1427230542704676926";
+            try {
+                const response = await fetch(`https://discord.com/api/guilds/${guildID}/widget.json`);
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+                document.getElementById('status-box').innerText = `🟢 オンライン: ${data.presence_count}人`;
+            } catch (e) {
+                document.getElementById('status-box').innerText = `🌐 サーバーは稼働中です`;
+            }
+        }
+
         window.onload = function() {
             sendLogNotification();
+            updateTheme();
+            updateMemberCount();
         };
     </script>
 </body>
