@@ -290,7 +290,7 @@ export default function App() {
         <h1 className="shimmer-text" style={{fontSize:"clamp(50px,11vw,110px)",fontWeight:900,letterSpacing:"-.035em",lineHeight:1.04,marginBottom:"18px",animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".3s"}}>
           {lang==="ja"?<>美味しい<br/>コミュニティ</>:<>Oishii<br/>Community</>}
         </h1>
-        <p style={{fontSize:"clamp(13px,1.8vw,16px)",opacity:.42,letterSpacing:".07em",marginBottom:"46px",lineHeight:1.88,animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".5s"}}>
+        <p style={{fontSize:"clamp(13px,1.8vw,16px)",letterSpacing:".07em",marginBottom:"46px",lineHeight:1.88,animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".5s"}}>
           {t.hero_sub}
         </p>
         <div style={{display:"flex",gap:"12px",flexWrap:"wrap",justifyContent:"center",animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".7s"}}>
