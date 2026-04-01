@@ -5,630 +5,579 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>おいしいコミュニティ</title>
 <style>
-:root{--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.10);--glass-hover:rgba(255,255,255,0.07);}
+:root{--g:rgba(255,255,255,.04);--gb:rgba(255,255,255,.10);--gh:rgba(255,255,255,.07);}
 *{margin:0;padding:0;box-sizing:border-box;cursor:default;}
 html{scroll-behavior:smooth;}
-body{background:#080808;color:white;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Hiragino Sans',sans-serif;overflow-x:hidden;min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:60px 60px;}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(255,255,255,.03) 0%,transparent 70%);}
+body{background:#080808;color:#fff;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:60px 60px;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(255,255,255,.03),transparent 70%);}
 
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
-@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.1)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
-@keyframes adminPulse{0%,100%{opacity:.8}50%{opacity:1}}
-@keyframes logoFlip{0%,42%{opacity:1;transform:translateY(0)}47%{opacity:0;transform:translateY(-6px)}52%{opacity:0;transform:translateY(6px)}57%,100%{opacity:1;transform:translateY(0)}}
+/* SPLASH */
+#splash{position:fixed;inset:0;background:#080808;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease,transform .6s ease;}
+#splash.hide{opacity:0;pointer-events:none;transform:scale(1.04);}
+.sp-logo{font-size:clamp(28px,6vw,52px);font-weight:900;letter-spacing:-.03em;margin-bottom:16px;}
+.sp-cursor{display:inline-block;width:3px;height:1em;background:white;margin-left:3px;vertical-align:middle;animation:_bc .7s infinite;}
+.sp-sub{font-size:13px;opacity:0;letter-spacing:.2em;transition:opacity .5s;}
+.sp-bar-wrap{width:200px;height:2px;background:rgba(255,255,255,.1);border-radius:100px;margin-top:24px;overflow:hidden;}
+.sp-bar{height:100%;background:#fff;border-radius:100px;width:0;transition:width .05s linear;}
 
-.reveal{opacity:0;transform:translateY(34px);}
-.revealed{animation:fadeUp .85s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes _bc{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes _fu{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:translateY(0)}}
+@keyframes _fi{from{opacity:0}to{opacity:1}}
+@keyframes _sh{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes _pr{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.1)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
+@keyframes _ap{0%,100%{opacity:.8}50%{opacity:1}}
+@keyframes _fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
-.card{background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.09);transition:all .4s cubic-bezier(.16,1,.3,1);}
-.card:hover{transform:translateY(-4px);background:var(--glass-hover);border-color:rgba(255,255,255,.18);box-shadow:0 24px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.13);}
-.card-admin{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.22);}
+.rv{opacity:0;transform:translateY(34px);}
+.rv.in{animation:_fu .85s cubic-bezier(.16,1,.3,1) forwards;}
 
-.btn-glass{background:rgba(255,255,255,.07);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.17);color:white;border-radius:100px;padding:9px 20px;font-size:12px;letter-spacing:.08em;box-shadow:0 4px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1);transition:all .3s ease;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;white-space:nowrap;}
-.btn-glass:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.36);transform:translateY(-2px);}
-.btn-white{background:white;color:black;border:none;border-radius:100px;padding:10px 24px;font-size:12px;letter-spacing:.1em;font-weight:700;animation:pulseRing 3s ease-in-out infinite;transition:all .3s cubic-bezier(.16,1,.3,1);cursor:pointer;font-family:inherit;}
-.btn-white:hover{background:rgba(255,255,255,.88);transform:translateY(-2px) scale(1.02);box-shadow:0 12px 40px rgba(255,255,255,.2);}
+.cd{background:var(--g);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.09);transition:all .4s cubic-bezier(.16,1,.3,1);}
+.cd:hover{transform:translateY(-4px);background:var(--gh);border-color:rgba(255,255,255,.18);}
+.cd-a{background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.22)!important;}
 
-.shimmer{background:linear-gradient(90deg,#fff 0%,#fff 36%,rgba(255,255,255,.3) 50%,#fff 64%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4.5s linear infinite;}
+.bg{background:rgba(255,255,255,.07);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.17);color:#fff;border-radius:100px;padding:8px 18px;font-size:12px;letter-spacing:.07em;transition:all .3s ease;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;white-space:nowrap;}
+.bg:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.36);transform:translateY(-2px);}
+.bg.act{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.5);}
+.bw{background:#fff;color:#000;border:none;border-radius:100px;padding:10px 24px;font-size:12px;letter-spacing:.1em;font-weight:700;animation:_pr 3s ease-in-out infinite;transition:all .3s cubic-bezier(.16,1,.3,1);cursor:pointer;font-family:inherit;}
+.bw:hover{background:rgba(255,255,255,.88);transform:translateY(-2px) scale(1.02);box-shadow:0 12px 40px rgba(255,255,255,.2);}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.055);}
-.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.sm{background:linear-gradient(90deg,#fff 0%,#fff 36%,rgba(255,255,255,.3) 50%,#fff 64%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:_sh 4.5s linear infinite;}
 
-.logo-wrap{position:relative;height:20px;overflow:hidden;min-width:175px;}
-.logo-a,.logo-b{position:absolute;top:0;left:0;font-size:13px;font-weight:900;letter-spacing:.1em;white-space:nowrap;}
-.logo-a{animation:logoFlip 6s ease-in-out infinite;}
-.logo-b{animation:logoFlip 6s ease-in-out infinite;animation-delay:3s;opacity:0;}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);}
+.nv-r{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+#logo-txt{font-size:13px;font-weight:900;letter-spacing:.1em;white-space:nowrap;transition:opacity .2s,transform .2s;display:inline-block;}
 
-#hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100vh;padding:80px 24px 0;}
-.hero-label{display:flex;align-items:center;justify-content:center;gap:12px;animation:fadeIn 1s ease forwards;opacity:0;animation-delay:.15s;margin-bottom:22px;}
-.hero-line{width:36px;height:1px;background:rgba(255,255,255,.22);}
-.hero-tag{font-size:11px;letter-spacing:.3em;opacity:.38;text-transform:uppercase;}
-.hero-h1{font-size:clamp(50px,11vw,108px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.3s;}
-.hero-sub{font-size:clamp(13px,1.8vw,16px);opacity:.42;letter-spacing:.07em;margin-bottom:46px;line-height:1.88;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.5s;}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.7s;}
-.scroll-hint{position:absolute;bottom:34px;animation:fadeIn 2s ease forwards;opacity:0;animation-delay:1.3s;}
-.scroll-hint svg{opacity:.22;animation:float 2.3s ease-in-out infinite;}
+/* TABS */
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:100px;padding:4px;}
+.tab{padding:6px 14px;border-radius:100px;font-size:11px;letter-spacing:.07em;cursor:pointer;transition:all .25s;color:rgba(255,255,255,.5);border:none;background:none;font-family:inherit;}
+.tab:hover{color:#fff;background:rgba(255,255,255,.06);}
+.tab.on{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.22);}
 
-.sw{padding:64px 24px;max-width:880px;margin:0 auto;}
-.sww{padding:64px 24px;max-width:1100px;margin:0 auto;}
-.sec-label{font-size:11px;letter-spacing:.3em;opacity:.35;margin-bottom:12px;text-transform:uppercase;}
-.sec-title{font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-.03em;}
-.sec-head{text-align:center;margin-bottom:50px;}
+/* PAGE TRANSITION */
+.page{display:none;min-height:100vh;padding-top:70px;animation:_fi .4s ease;}
+.page.on{display:block;}
 
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;}
-.stat-inner{padding:30px 18px;text-align:center;}
-.stat-num{font-size:clamp(32px,5vw,44px);font-weight:900;letter-spacing:-.03em;margin-bottom:5px;}
-.stat-lbl{font-size:11px;opacity:.35;letter-spacing:.12em;}
+/* HERO */
+.hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:calc(100vh - 70px);padding:0 24px 40px;}
+.hl{display:flex;align-items:center;justify-content:center;gap:12px;animation:_fi 1s ease forwards;opacity:0;animation-delay:.1s;margin-bottom:20px;}
+.hln{width:36px;height:1px;background:rgba(255,255,255,.22);}
+.hh1{font-size:clamp(48px,11vw,108px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:16px;animation:_fu 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.3s;}
+.hbt{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:_fu 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.7s;}
 
-.shop-layout{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;}
-.shop-left{flex:1;min-width:230px;}
-.shop-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:7px 16px;border-radius:100px;font-size:12px;letter-spacing:.1em;margin-bottom:20px;}
-.shop-ttl{font-size:clamp(19px,3vw,29px);font-weight:900;letter-spacing:-.02em;margin-bottom:12px;line-height:1.38;}
-.shop-desc{font-size:13px;opacity:.46;line-height:1.92;margin-bottom:22px;}
-.shop-pts{display:flex;flex-direction:column;gap:9px;margin-bottom:28px;}
-.shop-pt{display:flex;align-items:center;gap:10px;}
-.pdw{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.pd{width:5px;height:5px;border-radius:50%;background:white;}
-.pt-txt{font-size:13px;opacity:.65;}
-.ratio-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:20px 22px;}
-.ratio-row{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap;}
-.rdot{width:9px;height:9px;border-radius:50%;}
+/* LAYOUT */
+.sw{padding:56px 24px;max-width:880px;margin:0 auto;}
+.sww{padding:56px 24px;max-width:1100px;margin:0 auto;}
+.sh{text-align:center;margin-bottom:44px;}
+.sl{font-size:11px;letter-spacing:.3em;opacity:.35;margin-bottom:10px;text-transform:uppercase;}
+.st{font-size:clamp(26px,5vw,46px);font-weight:900;letter-spacing:-.03em;}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;}
+.sn{font-size:clamp(30px,5vw,42px);font-weight:900;letter-spacing:-.03em;margin-bottom:4px;}
+.slb{font-size:11px;opacity:.35;letter-spacing:.12em;}
+
+/* SHOP */
+.shl{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;}
+.shp-l{flex:1;min-width:220px;}
+.shp-b{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:6px 14px;border-radius:100px;font-size:12px;letter-spacing:.1em;margin-bottom:18px;}
+.shp-t{font-size:clamp(18px,3vw,28px);font-weight:900;letter-spacing:-.02em;margin-bottom:10px;line-height:1.38;}
+.shp-d{font-size:13px;opacity:.46;line-height:1.92;margin-bottom:20px;}
+.shp-pts{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.shp-pt{display:flex;align-items:center;gap:10px;}
+.pdw{width:17px;height:17px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pd{width:5px;height:5px;border-radius:50%;background:#fff;}
+.rbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:18px 20px;}
+.rrow{display:flex;gap:14px;margin-bottom:9px;flex-wrap:wrap;}
+.rdot{width:8px;height:8px;border-radius:50%;}
 .rtxt{font-size:12px;opacity:.72;}
-.rbar-bg{height:7px;border-radius:100px;background:rgba(255,255,255,.09);overflow:hidden;}
-.rbar{height:100%;background:linear-gradient(90deg,rgba(255,255,255,.92),rgba(255,255,255,.48));border-radius:100px;width:0;}
-.shop-circle{width:clamp(105px,17vw,145px);height:clamp(105px,17vw,145px);border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 55px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.09);}
-.shop-num{font-size:clamp(30px,5vw,46px);font-weight:900;}
-.shop-sub-lbl{font-size:10px;opacity:.34;letter-spacing:.12em;}
-.shop-right{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.rbg{height:6px;border-radius:100px;background:rgba(255,255,255,.09);overflow:hidden;}
+.rb{height:100%;background:linear-gradient(90deg,rgba(255,255,255,.92),rgba(255,255,255,.48));border-radius:100px;width:0;transition:width 1.3s cubic-bezier(.16,1,.3,1) .3s;}
+.shp-c{width:clamp(100px,16vw,140px);height:clamp(100px,16vw,140px);border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 50px rgba(255,255,255,.04);}
+.shp-r{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 
-.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
-.admin-inner{padding:28px;}
-.adm-av-wrap{position:relative;margin-bottom:16px;}
-.adm-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;}
-.adm-badge{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;animation:adminPulse 2.5s ease-in-out infinite;}
-.adm-name{font-size:18px;font-weight:900;margin-bottom:4px;}
-.adm-role-tag{display:inline-block;font-size:10px;letter-spacing:.12em;padding:3px 10px;border-radius:100px;margin-bottom:12px;}
-.adm-desc{font-size:13px;opacity:.52;line-height:1.88;}
+/* MEMBER GRAPH */
+.mg-wrap{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:24px;}
+.mg-title{font-size:12px;letter-spacing:.2em;opacity:.4;text-transform:uppercase;margin-bottom:20px;}
+.mg-bars{display:flex;align-items:flex-end;gap:10px;height:120px;}
+.mg-bar-wrap{display:flex;flex-direction:column;align-items:center;flex:1;gap:6px;}
+.mg-bar{width:100%;border-radius:6px 6px 0 0;background:rgba(255,255,255,.15);position:relative;transition:height 1.2s cubic-bezier(.16,1,.3,1);min-width:30px;}
+.mg-bar-hi{background:linear-gradient(to top,rgba(255,255,255,.5),rgba(255,255,255,.9));}
+.mg-bar-val{font-size:10px;font-weight:700;opacity:.7;}
+.mg-bar-lbl{font-size:9px;opacity:.4;text-align:center;letter-spacing:.05em;}
 
-.voices-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:12px;}
-.voice-inner{padding:22px;}
-.voice-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.vav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
-.vav-n{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);}
-.vav-a{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);}
-.v-name{font-size:13px;font-weight:700;}
-.v-role{font-size:10px;opacity:.35;}
-.v-role-a{opacity:.75;}
-.v-stars{font-size:12px;letter-spacing:1px;margin-bottom:8px;}
-.v-txt{font-size:12px;opacity:.54;line-height:1.88;margin-top:10px;}
+/* ADMIN */
+.ag{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;}
+.ai{padding:26px;}
+.aaw{position:relative;margin-bottom:14px;}
+.aa{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;}
+.ab{position:absolute;bottom:-2px;right:-2px;width:19px;height:19px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:_ap 2.5s ease-in-out infinite;}
+.an{font-size:17px;font-weight:900;margin-bottom:4px;}
+.art{display:inline-block;font-size:10px;letter-spacing:.12em;padding:3px 10px;border-radius:100px;margin-bottom:10px;}
+.ad{font-size:13px;opacity:.52;line-height:1.88;}
 
-.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
-.rule-inner{padding:24px;}
-.rule-num{font-size:28px;font-weight:900;opacity:.12;letter-spacing:-.03em;margin-bottom:8px;}
-.rule-ttl{font-size:15px;font-weight:900;margin-bottom:10px;}
-.rule-items{display:flex;flex-direction:column;gap:8px;}
-.rule-item{display:flex;gap:8px;align-items:flex-start;}
-.rbullet{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0;margin-top:8px;}
-.rule-txt{font-size:12px;opacity:.55;line-height:1.75;}
-.admin-note{margin-top:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:20px 22px;}
-.an-ttl{font-size:12px;letter-spacing:.15em;opacity:.5;margin-bottom:10px;text-transform:uppercase;}
-.an-txt{font-size:13px;opacity:.55;line-height:1.88;}
+/* VOICES */
+.vg{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px;}
+.vi{padding:20px;}
+.vh{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.va{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.va-n{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);}
+.va-a{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);}
+.vn{font-size:13px;font-weight:700;}
+.vr{font-size:10px;opacity:.35;}
+.vt{font-size:12px;opacity:.54;line-height:1.88;margin-top:9px;}
 
-.faq-list{display:flex;flex-direction:column;gap:10px;}
-.faq-item{border-radius:14px;overflow:hidden;border:1px solid var(--glass-border);background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
-.faq-q{width:100%;background:none;border:none;color:white;padding:18px 20px;font-size:14px;font-weight:700;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:inherit;cursor:pointer;transition:background .2s;}
-.faq-q:hover{background:rgba(255,255,255,.04);}
-.faq-arr{font-size:12px;opacity:.5;transition:transform .3s;flex-shrink:0;}
-.faq-arr.open{transform:rotate(180deg);}
-.faq-a{font-size:13px;color:rgba(255,255,255,.58);line-height:1.9;padding:0 20px;max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),padding .3s,opacity .3s;opacity:0;}
-.faq-a.open{max-height:300px;padding:0 20px 18px;opacity:1;}
+/* RULES */
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;}
+.ri{padding:22px;}
+.rnum{font-size:26px;font-weight:900;opacity:.12;letter-spacing:-.03em;margin-bottom:7px;}
+.rtt{font-size:14px;font-weight:900;margin-bottom:9px;}
+.rit{display:flex;flex-direction:column;gap:7px;}
+.rii{display:flex;gap:7px;align-items:flex-start;}
+.rbu{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0;margin-top:7px;}
+.rtc{font-size:12px;opacity:.55;line-height:1.75;}
+.anote{margin-top:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:18px 20px;}
 
-.bgm-wrap{padding:40px 24px;max-width:700px;margin:0 auto;}
-.bgm-card{padding:24px 28px;}
-.bgm-sec-lbl{font-size:11px;letter-spacing:.25em;opacity:.38;margin-bottom:16px;text-transform:uppercase;}
-.bgm-main-lbl{font-size:14px;font-weight:700;margin-bottom:4px;}
-.bgm-sub-lbl{font-size:11px;opacity:.4;margin-bottom:16px;letter-spacing:.05em;}
-.bgm-tracks{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.bgm-track{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:all .25s;background:rgba(255,255,255,.03);}
-.bgm-track:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);}
-.bgm-track.active{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22);}
-.bgm-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0;transition:all .25s;}
-.bgm-track.active .bgm-dot{background:white;}
-.bgm-track-name{font-size:13px;font-weight:600;}
-.bgm-track-sub{font-size:11px;opacity:.42;margin-top:2px;}
-.bgm-player-wrap{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
-.bgm-player-wrap iframe{display:block;width:100%;border:none;}
+/* FAQ */
+.fl{display:flex;flex-direction:column;gap:9px;}
+.fi{border-radius:13px;overflow:hidden;border:1px solid var(--gb);background:var(--g);backdrop-filter:blur(20px);}
+.fq{width:100%;background:none;border:none;color:#fff;padding:16px 18px;font-size:13px;font-weight:700;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:inherit;cursor:pointer;}
+.fq:hover{background:rgba(255,255,255,.04);}
+.fa-arr{font-size:11px;opacity:.5;transition:transform .3s;flex-shrink:0;}
+.fa-arr.op{transform:rotate(180deg);}
+.fa{font-size:13px;color:rgba(255,255,255,.56);line-height:1.9;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),padding .3s,opacity .3s;opacity:0;}
+.fa.op{max-height:300px;padding:0 18px 16px;opacity:1;}
 
-.cta-card{max-width:560px;margin:0 auto;}
-.cta-inner{padding:clamp(34px,6vw,64px) clamp(20px,4vw,50px);text-align:center;}
-.cta-label-txt{font-size:11px;letter-spacing:.3em;opacity:.35;margin-bottom:20px;text-transform:uppercase;}
-.cta-ttl{font-size:clamp(24px,4vw,40px);font-weight:900;letter-spacing:-.03em;margin-bottom:12px;}
-.cta-desc{font-size:13px;opacity:.44;line-height:1.88;margin-bottom:36px;}
-footer{text-align:center;padding:28px;border-top:1px solid rgba(255,255,255,.05);}
-.footer-txt{font-size:11px;opacity:.16;letter-spacing:.1em;}
-#weather-canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:5;}
-@media(max-width:600px){nav{padding:12px 14px;}.nav-right{gap:5px;}.btn-glass{padding:7px 11px;font-size:11px;}.sw,.sww{padding:48px 14px;}}
+/* BGM */
+.bmw{padding:36px 24px;max-width:680px;margin:0 auto;}
+.bmc{padding:22px 26px;}
+.bmt{display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+.bmi{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:all .25s;background:rgba(255,255,255,.03);}
+.bmi:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);}
+.bmi.on{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22);}
+.bmd{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0;transition:all .25s;}
+.bmi.on .bmd{background:#fff;}
+.bpw{border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
+.bpw iframe{display:block;width:100%;border:none;}
+
+/* CTA */
+.ctac{max-width:540px;margin:0 auto;}
+.ctai{padding:clamp(30px,6vw,60px) clamp(18px,4vw,48px);text-align:center;}
+
+/* HISTORY TIMELINE */
+.tl{position:relative;padding-left:32px;}
+.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,rgba(255,255,255,.3),rgba(255,255,255,.05));}
+.te{position:relative;margin-bottom:34px;}
+.te::before{content:'';position:absolute;left:-28px;top:6px;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 12px rgba(255,255,255,.4);}
+.te.crisis::before{background:rgba(255,120,120,.9);box-shadow:0 0 12px rgba(255,100,100,.5);}
+.te.milestone::before{background:rgba(255,255,255,1);box-shadow:0 0 20px rgba(255,255,255,.7);}
+.te-date{font-size:11px;letter-spacing:.2em;opacity:.4;margin-bottom:6px;text-transform:uppercase;}
+.te-ttl{font-size:16px;font-weight:900;margin-bottom:8px;}
+.te-txt{font-size:13px;opacity:.55;line-height:1.9;}
+.te-special{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px 20px;margin-top:10px;}
+.te-tag{display:inline-block;font-size:10px;letter-spacing:.15em;padding:2px 10px;border-radius:100px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);margin-bottom:10px;text-transform:uppercase;}
+.te-crisis-box{background:rgba(255,80,80,.06);border:1px solid rgba(255,100,100,.2);border-radius:12px;padding:16px 18px;margin-top:10px;}
+
+/* STORY */
+.story-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.sc{padding:26px;}
+.sc-num{font-size:32px;font-weight:900;opacity:.1;letter-spacing:-.03em;margin-bottom:8px;}
+.sc-ttl{font-size:15px;font-weight:900;margin-bottom:8px;}
+.sc-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.1em;padding:3px 10px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);margin-bottom:12px;}
+.sc-desc{font-size:13px;opacity:.52;line-height:1.85;margin-bottom:16px;}
+.sc-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-size:12px;color:#fff;text-decoration:none;transition:all .25s;}
+.sc-btn:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.32);transform:translateY(-2px);}
+
+#wc{position:fixed;top:0;left:0;pointer-events:none;z-index:5;}
+@media(max-width:600px){nav{padding:11px 13px;}.nv-r{gap:5px;}.bg{padding:6px 10px;font-size:11px;}.tabs{gap:2px;}.tab{padding:5px 9px;font-size:10px;}.sw,.sww{padding:44px 14px;}}
 </style>
 </head>
 <body>
-<canvas id="weather-canvas"></canvas>
 
-<!-- NAV -->
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-logo"><span id="sp-txt"></span><span class="sp-cursor" id="sp-cur"></span></div>
+  <div class="sp-sub" id="sp-sub">Discord Community</div>
+  <div class="sp-bar-wrap"><div class="sp-bar" id="sp-bar"></div></div>
+</div>
+
+<canvas id="wc"></canvas>
+
 <nav>
-  <div class="logo-wrap">
-    <span class="logo-a" id="logo-a">おいしいコミュニティ</span>
-    <span class="logo-b" id="logo-b">美味しいコミュニティ</span>
-  </div>
-  <div class="nav-right">
-    <button class="btn-glass" onclick="cycleWeather()">
-      <span id="weather-icon">☀️</span><span id="weather-label" data-ja="晴れ" data-en="Clear">晴れ</span>
-    </button>
-    <button class="btn-glass" onclick="toggleLang()" id="lang-btn">EN</button>
-    <button class="btn-white" onclick="window.open('https://discord.gg/dcus','_blank')" data-ja="参加する" data-en="Join">参加する</button>
+  <span id="logo-txt">おいしいコミュニティ</span>
+  <div class="nv-r">
+    <div class="tabs" id="tabs">
+      <button class="tab on" onclick="goPage('home',this)">ホーム</button>
+      <button class="tab" onclick="goPage('story',this)">おいしい物語</button>
+      <button class="tab" onclick="goPage('history',this)">おいしいの歴史</button>
+      <button class="tab" onclick="goPage('team',this)">管理者紹介</button>
+    </div>
+    <button class="bg" onclick="cw()" id="wb"><span id="wi">☀️</span><span id="wl">晴れ</span></button>
+    <button class="bg" onclick="tlng()" id="lb">EN</button>
+    <button class="bw" onclick="window.open(_x(),'_blank')" id="nb">参加する</button>
   </div>
 </nav>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-label">
-    <div class="hero-line"></div>
-    <span class="hero-tag">Discord Community</span>
-    <div class="hero-line"></div>
+<!-- ══ PAGE: HOME ══ -->
+<div class="page on" id="pg-home">
+<section class="hero">
+  <div class="hl"><div class="hln"></div><span style="font-size:11px;letter-spacing:.3em;opacity:.38;text-transform:uppercase">Discord Community</span><div class="hln"></div></div>
+  <h1 class="hh1 sm" id="hh1">おいしい<br>コミュニティ</h1>
+  <p style="font-size:clamp(13px,1.8vw,16px);opacity:.42;letter-spacing:.07em;margin-bottom:44px;line-height:1.88;animation:_fu 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.5s" id="hsb" data-j="信頼と実績が積み重なる、上質なDiscordコミュニティ" data-e="A premium Discord community built on trust and proven results.">信頼と実績が積み重なる、上質なDiscordコミュニティ</p>
+  <div class="hbt">
+    <button class="bg" style="padding:13px 26px;font-size:13px" onclick="document.getElementById('s-shop').scrollIntoView({behavior:'smooth'})" id="hbd" data-j="詳細を見る" data-e="Learn More">詳細を見る</button>
+    <button class="bw" style="padding:13px 30px;font-size:13px" onclick="window.open(_x(),'_blank')" id="hbj" data-j="参加する →" data-e="Join Now →">参加する →</button>
   </div>
-  <h1 class="hero-h1 shimmer" id="hero-h1">おいしい<br>コミュニティ</h1>
-  <p class="hero-sub" data-ja="信頼と実績が積み重なる、上質なDiscordコミュニティ" data-en="A premium Discord community built on trust and proven results." id="hero-sub">信頼と実績が積み重なる、上質なDiscordコミュニティ</p>
-  <div class="hero-btns">
-    <button class="btn-glass" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" data-ja="詳細を見る" data-en="Learn More" id="hero-btn-detail">詳細を見る</button>
-    <button class="btn-white" style="padding:14px 32px;font-size:13px;" onclick="window.open('https://discord.gg/dcus','_blank')" data-ja="参加する →" data-en="Join Now →" id="hero-btn-join">参加する →</button>
-  </div>
-  <div class="scroll-hint">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-  </div>
+  <div style="position:absolute;bottom:28px;animation:_fi 2s ease forwards;opacity:0;animation-delay:1.3s"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.22;animation:_fl 2.3s ease-in-out infinite"><polyline points="6 9 12 15 18 9"/></svg></div>
 </section>
 
 <!-- STATS -->
-<section class="sw reveal" id="sec-stats">
-  <div class="stats-grid">
-    <div class="card"><div class="stat-inner">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.32;margin:0 auto 12px;display:block;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
-      <div class="stat-num" id="count-deals">0+</div>
-      <div class="stat-lbl" data-ja="取引実績" data-en="Deals Done" id="lbl-deals">取引実績</div>
-    </div></div>
-    <div class="card"><div class="stat-inner">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.32;margin:0 auto 12px;display:block;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      <div class="stat-num" id="count-members">0+</div>
-      <div class="stat-lbl" data-ja="コミュニティメンバー" data-en="Members" id="lbl-members">コミュニティメンバー</div>
-    </div></div>
-    <div class="card"><div class="stat-inner">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.32;margin:0 auto 12px;display:block;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-      <div class="stat-num" id="count-sat">0%</div>
-      <div class="stat-lbl" data-ja="満足度" data-en="Satisfaction" id="lbl-sat">満足度</div>
-    </div></div>
-    <div class="card"><div class="stat-inner">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1" style="opacity:.32;margin:0 auto 12px;display:block;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      <div class="stat-num" id="count-rating">0.0</div>
-      <div class="stat-lbl" data-ja="平均評価" data-en="Avg Rating" id="lbl-rating">平均評価</div>
-    </div></div>
+<section class="sw rv" id="s-stats">
+  <div class="sg">
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.3;margin:0 auto 11px;display:block"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg><div class="sn" id="c-deals">0+</div><div class="slb" id="l-deals" data-j="取引実績" data-e="Deals Done">取引実績</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.3;margin:0 auto 11px;display:block"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><div class="sn" id="c-mem">0+</div><div class="slb" id="l-mem" data-j="コミュニティメンバー" data-e="Members">コミュニティメンバー</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.3;margin:0 auto 11px;display:block"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><div class="sn" id="c-sat">0%</div><div class="slb" id="l-sat" data-j="満足度" data-e="Satisfaction">満足度</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="opacity:.3;margin:0 auto 11px;display:block"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><div class="sn" id="c-rat">0.0</div><div class="slb" id="l-rat" data-j="平均評価" data-e="Avg Rating">平均評価</div></div></div>
   </div>
 </section>
 
-<!-- SHOP -->
-<section class="sw reveal" id="shop">
-  <div class="sec-head">
-    <div class="sec-label">— Shop —</div>
-    <div class="sec-title" data-ja="ショップ紹介" data-en="Shop" id="shop-title">ショップ紹介</div>
-  </div>
-  <div class="card"><div style="padding:clamp(26px,5vw,50px);">
-    <div class="shop-layout">
-      <div class="shop-left">
-        <div class="shop-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <span data-ja="実績 40件以上" data-en="40+ Deals" id="shop-badge-txt">実績 40件以上</span>
-        </div>
-        <div class="shop-ttl" data-ja="積み重ねた信頼が、<br>品質を証明する。" data-en="Trust earned through<br>every transaction." id="shop-ttl">積み重ねた信頼が、<br>品質を証明する。</div>
-        <p class="shop-desc" data-ja="「おいしいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。" data-en="Oishii Community's shop boasts over 40 completed transactions. Each deal is handled with care and integrity, earning the trust of our growing member base." id="shop-desc">「おいしいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。</p>
-        <div class="shop-pts">
-          <div class="shop-pt"><div class="pdw"><div class="pd"></div></div><span class="pt-txt" data-ja="丁寧かつ迅速な対応" data-en="Prompt and courteous support" id="pt1">丁寧かつ迅速な対応</span></div>
-          <div class="shop-pt"><div class="pdw"><div class="pd"></div></div><span class="pt-txt" data-ja="40件超えの確かな実績" data-en="40+ verified transactions" id="pt2">40件超えの確かな実績</span></div>
-          <div class="shop-pt"><div class="pdw"><div class="pd"></div></div><span class="pt-txt" data-ja="安心できる取引環境" data-en="Safe and reliable trading" id="pt3">安心できる取引環境</span></div>
-        </div>
-        <div class="ratio-box">
-          <div style="font-size:11px;letter-spacing:.18em;opacity:.36;margin-bottom:14px;text-transform:uppercase;" data-ja="チャンネル構成" data-en="Channel Breakdown" id="ratio-ttl">チャンネル構成</div>
-          <div class="ratio-row">
-            <div style="display:flex;align-items:center;gap:7px;"><div class="rdot" style="background:rgba(255,255,255,.9);"></div><span class="rtxt"><span data-ja="ショップ" data-en="Shop" id="ratio-shop">ショップ</span> 60%</span></div>
-            <div style="display:flex;align-items:center;gap:7px;"><div class="rdot" style="background:rgba(255,255,255,.32);"></div><span class="rtxt"><span data-ja="雑談" data-en="Chat" id="ratio-chat">雑談</span> 40%</span></div>
-          </div>
-          <div class="rbar-bg"><div class="rbar" id="ratio-bar"></div></div>
-        </div>
-      </div>
-      <div class="shop-right">
-        <div class="shop-circle">
-          <div class="shop-num">40+</div>
-          <div class="shop-sub-lbl">DEALS</div>
-        </div>
-      </div>
+<!-- MEMBER GROWTH GRAPH -->
+<section class="sw rv" id="s-graph">
+  <div class="sh"><div class="sl">— Growth —</div><div class="st" id="g-t" data-j="メンバー成長推移" data-e="Member Growth">メンバー成長推移</div></div>
+  <div class="cd"><div style="padding:28px">
+    <div class="mg-wrap" style="background:none;border:none;padding:0">
+      <div class="mg-title" id="g-sub" data-j="サーバー開設からの人数推移" data-e="Member count since server launch">サーバー開設からの人数推移</div>
+      <div class="mg-bars" id="mg-bars"></div>
     </div>
   </div></div>
 </section>
 
-<!-- ADMIN -->
-<section class="sww reveal" id="sec-admin">
-  <div class="sec-head">
-    <div class="sec-label">— Team —</div>
-    <div class="sec-title" data-ja="管理者紹介" data-en="Meet the Team" id="admin-title">管理者紹介</div>
-  </div>
-  <div class="admin-grid">
-    <div class="card card-admin"><div class="admin-inner">
-      <div class="adm-av-wrap">
-        <div class="adm-av" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);">Y</div>
-        <div class="adm-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg></div>
+<!-- SHOP -->
+<section class="sw rv" id="s-shop">
+  <div class="sh"><div class="sl">— Shop —</div><div class="st" id="shop-t" data-j="ショップ紹介" data-e="Shop">ショップ紹介</div></div>
+  <div class="cd"><div style="padding:clamp(24px,5vw,48px)">
+    <div class="shl">
+      <div class="shp-l">
+        <div class="shp-b"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span id="sb-t" data-j="実績 40件以上" data-e="40+ Deals">実績 40件以上</span></div>
+        <div class="shp-t" id="shp-tt" data-j="積み重ねた信頼が、<br>品質を証明する。" data-e="Trust earned through<br>every transaction.">積み重ねた信頼が、<br>品質を証明する。</div>
+        <p class="shp-d" id="shp-d" data-j="「おいしいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。" data-e="Oishii Community's shop boasts over 40 completed transactions. Each deal is handled with care and integrity.">「おいしいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。</p>
+        <div class="shp-pts">
+          <div class="shp-pt"><div class="pdw"><div class="pd"></div></div><span id="p1" data-j="丁寧かつ迅速な対応" data-e="Prompt and courteous support" style="font-size:13px;opacity:.65">丁寧かつ迅速な対応</span></div>
+          <div class="shp-pt"><div class="pdw"><div class="pd"></div></div><span id="p2" data-j="40件超えの確かな実績" data-e="40+ verified transactions" style="font-size:13px;opacity:.65">40件超えの確かな実績</span></div>
+          <div class="shp-pt"><div class="pdw"><div class="pd"></div></div><span id="p3" data-j="安心できる取引環境" data-e="Safe and reliable trading" style="font-size:13px;opacity:.65">安心できる取引環境</span></div>
+        </div>
+        <div class="rbox">
+          <div style="font-size:11px;letter-spacing:.18em;opacity:.36;margin-bottom:12px;text-transform:uppercase" id="rt-l" data-j="チャンネル構成" data-e="Channel Breakdown">チャンネル構成</div>
+          <div class="rrow">
+            <div style="display:flex;align-items:center;gap:6px"><div class="rdot" style="background:rgba(255,255,255,.9)"></div><span class="rtxt"><span id="r-shop" data-j="ショップ" data-e="Shop">ショップ</span> 60%</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div class="rdot" style="background:rgba(255,255,255,.3)"></div><span class="rtxt"><span id="r-chat" data-j="雑談" data-e="Chat">雑談</span> 40%</span></div>
+          </div>
+          <div class="rbg"><div class="rb" id="rbar"></div></div>
+        </div>
       </div>
-      <div class="adm-name">ゆずぴー</div>
-      <span class="adm-role-tag" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:white;" data-ja="👑 鯖主" data-en="👑 Server Owner" id="role-yuzupie">👑 鯖主</span>
-      <p class="adm-desc" data-ja="おいしいコミュニティの設立者。メンバーが安心して楽しめるサーバー作りを常に心がけています。何かあればお気軽にDMを！" data-en="Founder of Oishii Community. Always working to keep the server a safe and fun place for everyone. Feel free to DM anytime!" id="desc-yuzupie">おいしいコミュニティの設立者。メンバーが安心して楽しめるサーバー作りを常に心がけています。何かあればお気軽にDMを！</p>
-    </div></div>
-    <div class="card card-admin"><div class="admin-inner">
-      <div class="adm-av-wrap">
-        <div class="adm-av" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.35);">J</div>
-        <div class="adm-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      </div>
-      <div class="adm-name">じつねこ</div>
-      <span class="adm-role-tag" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:white;" data-ja="🛡️ サブオーナー" data-en="🛡️ Sub-Owner" id="role-jitsuneko">🛡️ サブオーナー</span>
-      <p class="adm-desc" data-ja="サーバーの裏方として日々サポート中。ルール違反や困りごとは気軽に相談してください。みんなが居心地よく過ごせるよう頑張ります！" data-en="Supporting the server behind the scenes every day. Feel free to reach out about any issues or concerns. Here to keep things comfortable for everyone!" id="desc-jitsuneko">サーバーの裏方として日々サポート中。ルール違反や困りごとは気軽に相談してください。みんなが居心地よく過ごせるよう頑張ります！</p>
-    </div></div>
-    <div class="card card-admin"><div class="admin-inner">
-      <div class="adm-av-wrap">
-        <div class="adm-av" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.3);">I</div>
-        <div class="adm-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      </div>
-      <div class="adm-name">いくすわ</div>
-      <span class="adm-role-tag" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:white;" data-ja="⚙️ 管理者" data-en="⚙️ Admin" id="role-ikusuwa">⚙️ 管理者</span>
-      <p class="adm-desc" data-ja="主にショップ周りとメンバー対応を担当しています。取引についての疑問や不安はいつでも声をかけてください！" data-en="Handles shop operations and member support. Don't hesitate to ask about any trading questions!" id="desc-ikusuwa">主にショップ周りとメンバー対応を担当しています。取引についての疑問や不安はいつでも声をかけてください！</p>
-    </div></div>
-  </div>
+      <div class="shp-r"><div class="shp-c"><div style="font-size:clamp(28px,5vw,44px);font-weight:900">40+</div><div style="font-size:10px;opacity:.34;letter-spacing:.12em">DEALS</div></div></div>
+    </div>
+  </div></div>
 </section>
 
 <!-- VOICES -->
-<section class="sww reveal" id="sec-voices">
-  <div class="sec-head">
-    <div class="sec-label">— Voice —</div>
-    <div class="sec-title" data-ja="サーバー民の声" data-en="Community Voices" id="voices-title">サーバー民の声</div>
-  </div>
-  <div class="voices-grid">
-    <div class="card card-admin"><div class="voice-inner">
-      <div class="voice-head">
-        <div style="position:relative;flex-shrink:0;">
-          <div class="vav vav-a">Y</div>
-          <div style="position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;animation:adminPulse 2.5s ease-in-out infinite;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        </div>
-        <div><div class="v-name">ゆずぴー</div><div class="v-role v-role-a" data-ja="管理者" data-en="Admin" id="vr-yuzupie">管理者</div></div>
-      </div>
-      <div class="v-stars">⭐⭐⭐⭐⭐</div>
-      <p class="v-txt" data-ja="実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。" data-en="40+ deals really sets them apart. The careful service totally won me over." id="vt-yuzupie">実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。</p>
-    </div></div>
-    <div class="card card-admin"><div class="voice-inner">
-      <div class="voice-head">
-        <div style="position:relative;flex-shrink:0;">
-          <div class="vav vav-a">I</div>
-          <div style="position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;animation:adminPulse 2.5s ease-in-out infinite;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-        </div>
-        <div><div class="v-name">いくすわ</div><div class="v-role v-role-a" data-ja="管理者" data-en="Admin" id="vr-ikusuwa">管理者</div></div>
-      </div>
-      <div class="v-stars">⭐⭐⭐⭐⭐</div>
-      <p class="v-txt" data-ja="サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！" data-en="Great vibe — easy to ask anything. So glad I joined!" id="vt-ikusuwa">サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！</p>
-    </div></div>
-    <div class="card"><div class="voice-inner">
-      <div class="voice-head"><div class="vav vav-n">D</div><div><div class="v-name">だくにる</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-dakuniru">アクティブメンバー</div></div></div>
-      <div class="v-stars">⭐⭐⭐⭐⭐</div>
-      <p class="v-txt" data-ja="他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。" data-en="Far more trustworthy than other servers. Quality that keeps me coming back." id="vt-dakuniru">他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。</p>
-    </div></div>
-    <div class="card"><div class="voice-inner">
-      <div class="voice-head"><div class="vav vav-n">K</div><div><div class="v-name">ここたん</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-kokotan">アクティブメンバー</div></div></div>
-      <div class="v-stars">⭐⭐⭐⭐⭐</div>
-      <p class="v-txt" data-ja="40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。" data-en="The 40+ track record speaks for itself. Community quality is on another level." id="vt-kokotan">40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。</p>
-    </div></div>
-    <div class="card"><div class="voice-inner">
-      <div class="voice-head"><div class="vav vav-n">S</div><div><div class="v-name">しちみ</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-shichimi">アクティブメンバー</div></div></div>
-      <div class="v-stars">⭐⭐⭐⭐⭐</div>
-      <p class="v-txt" data-ja="雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。" data-en="Chat is lively every day! Shop support is top-notch — so grateful." id="vt-shichimi">雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。</p>
-    </div></div>
-    <div class="card"><div class="voice-inner">
-      <div class="voice-head"><div class="vav vav-n">Y</div><div><div class="v-name">ゆきみ</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-yukimi">アクティブメンバー</div></div></div>
-      <div class="v-stars">⭐⭐⭐⭐⭐</div>
-      <p class="v-txt" data-ja="ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。" data-en="Both shop and chat are superb. Once you're in, you never want to leave." id="vt-yukimi">ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。</p>
-    </div></div>
+<section class="sww rv" id="s-voices">
+  <div class="sh"><div class="sl">— Voice —</div><div class="st" id="voi-t" data-j="サーバー民の声" data-e="Community Voices">サーバー民の声</div></div>
+  <div class="vg">
+    <div class="cd cd-a"><div class="vi"><div class="vh"><div style="position:relative;flex-shrink:0"><div class="va va-a">Y</div><div style="position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:_ap 2.5s ease-in-out infinite"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div><div class="vn">ゆずぴー</div><div class="vr" style="opacity:.75" id="vr-y" data-j="管理者" data-e="Admin">管理者</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" id="vt-y" data-j="実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。" data-e="40+ deals sets them apart. The careful service totally won me over.">実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。</p></div></div>
+    <div class="cd cd-a"><div class="vi"><div class="vh"><div style="position:relative;flex-shrink:0"><div class="va va-a">I</div><div style="position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:_ap 2.5s ease-in-out infinite"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div><div class="vn">いくすわ</div><div class="vr" style="opacity:.75" id="vr-i" data-j="管理者" data-e="Admin">管理者</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" id="vt-i" data-j="サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！" data-e="Great vibe — easy to ask anything. So glad I joined!">サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！</p></div></div>
+    <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">D</div><div><div class="vn">だくにる</div><div class="vr" id="vr-d" data-j="アクティブメンバー" data-e="Active Member">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" id="vt-d" data-j="他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。" data-e="Far more trustworthy than other servers. Quality that keeps me coming back.">他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。</p></div></div>
+    <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">K</div><div><div class="vn">ここたん</div><div class="vr" id="vr-k" data-j="アクティブメンバー" data-e="Active Member">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" id="vt-k" data-j="40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。" data-e="The 40+ track record speaks for itself. Community quality is on another level.">40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。</p></div></div>
+    <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">S</div><div><div class="vn">しちみ</div><div class="vr" id="vr-s" data-j="アクティブメンバー" data-e="Active Member">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" id="vt-s" data-j="雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。" data-e="Chat is lively every day! Shop support is top-notch — so grateful.">雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。</p></div></div>
+    <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">Y</div><div><div class="vn">ゆきみ</div><div class="vr" id="vr-yk" data-j="アクティブメンバー" data-e="Active Member">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" id="vt-yk" data-j="ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。" data-e="Both shop and chat are superb. Once you're in, you never want to leave.">ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。</p></div></div>
   </div>
 </section>
 
 <!-- RULES -->
-<section class="sw reveal" id="sec-rules">
-  <div class="sec-head">
-    <div class="sec-label">— Rules —</div>
-    <div class="sec-title" data-ja="サーバー利用規約" data-en="Server Rules" id="rules-title">サーバー利用規約</div>
+<section class="sw rv" id="s-rules">
+  <div class="sh"><div class="sl">— Rules —</div><div class="st" id="rl-t" data-j="サーバー利用規約" data-e="Server Rules">サーバー利用規約</div></div>
+  <div class="rg">
+    <div class="cd ri"><div class="rnum">01</div><div class="rtt" id="r1t" data-j="🤝 挨拶とマナー" data-e="🤝 Conduct">🤝 挨拶とマナー</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" id="r1a" data-j="相手を尊重する：攻撃的な口調や煽りは禁止です。" data-e="Be respectful: aggressive or provocative language is prohibited.">相手を尊重する：攻撃的な口調や煽りは禁止です。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" id="r1b" data-j="不快な発言の禁止：差別・過度な下ネタ・特定個人への中傷は控えてください。" data-e="No offensive speech: avoid discrimination, vulgarity, or defamation.">不快な発言の禁止：差別・過度な下ネタ・特定個人への中傷は控えてください。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">02</div><div class="rtt" id="r2t" data-j="📂 チャンネルの使い分け" data-e="📂 Channel Usage">📂 チャンネルの使い分け</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" id="r2a" data-j="各チャンネルの趣旨に沿った投稿をお願いします。" data-e="Please post in the appropriate channel for each topic.">各チャンネルの趣旨に沿った投稿をお願いします。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" id="r2b" data-j="意味のない連投・スタンプの大量送信は禁止です。" data-e="Meaningless spam and excessive sticker floods are prohibited.">意味のない連投・スタンプの大量送信は禁止です。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">03</div><div class="rtt" id="r3t" data-j="🔒 プライバシーと自衛" data-e="🔒 Privacy &amp; Safety">🔒 プライバシーと自衛</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" id="r3a" data-j="本名・住所・電話番号など個人特定に繋がる情報の投稿は禁止です。" data-e="Do not share real names, addresses, phone numbers, or any identifying info.">本名・住所・電話番号など個人特定に繋がる情報の投稿は禁止です。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" id="r3b" data-j="出会い目的のDM送信・勧誘は厳禁です。" data-e="Soliciting romantic connections via DM is strictly forbidden.">出会い目的のDM送信・勧誘は厳禁です。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">04</div><div class="rtt" id="r4t" data-j="🔔 メンションの扱い" data-e="🔔 Mentions">🔔 メンションの扱い</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" id="r4a" data-j="急用でもないのに管理者や特定メンバーへメンションを飛ばしすぎるのは避けましょう。" data-e="Avoid pinging admins or members unnecessarily for non-urgent matters.">急用でもないのに管理者や特定メンバーへメンションを飛ばしすぎるのは避けましょう。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">05</div><div class="rtt" id="r5t" data-j="🚫 禁止事項" data-e="🚫 Prohibited">🚫 禁止事項</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" id="r5a" data-j="荒らし行為：サーバー運営を妨害するすべての行為。" data-e="Trolling: any action that disrupts or harms the server.">荒らし行為：サーバー運営を妨害するすべての行為。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" id="r5b" data-j="宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。" data-e="Advertising other servers or SNS outside the designated channel is prohibited.">宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。</p></div></div></div>
   </div>
-  <div class="rules-grid">
-    <div class="card rule-inner"><div class="rule-num">01</div><div class="rule-ttl" data-ja="🤝 挨拶とマナー" data-en="🤝 Conduct &amp; Manners" id="r1-ttl">🤝 挨拶とマナー</div><div class="rule-items">
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="相手を尊重する：攻撃的な口調や煽りは禁止です。" data-en="Be respectful: aggressive or provocative language is prohibited." id="r1-1">相手を尊重する：攻撃的な口調や煽りは禁止です。</p></div>
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="不快な発言の禁止：差別・過度な下ネタ・特定個人への中傷は控えてください。" data-en="No offensive speech: avoid discrimination, excessive vulgarity, or defamation." id="r1-2">不快な発言の禁止：差別・過度な下ネタ・特定個人への中傷は控えてください。</p></div>
-    </div></div>
-    <div class="card rule-inner"><div class="rule-num">02</div><div class="rule-ttl" data-ja="📂 チャンネルの使い分け" data-en="📂 Channel Usage" id="r2-ttl">📂 チャンネルの使い分け</div><div class="rule-items">
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="各チャンネルの趣旨に沿った投稿をお願いします。" data-en="Please post in the appropriate channel for each topic." id="r2-1">各チャンネルの趣旨に沿った投稿をお願いします。</p></div>
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="意味のない連投・スタンプの大量送信は禁止です。" data-en="Meaningless spam and excessive sticker/emoji floods are prohibited." id="r2-2">意味のない連投・スタンプの大量送信は禁止です。</p></div>
-    </div></div>
-    <div class="card rule-inner"><div class="rule-num">03</div><div class="rule-ttl" data-ja="🔒 プライバシーと自衛" data-en="🔒 Privacy &amp; Safety" id="r3-ttl">🔒 プライバシーと自衛</div><div class="rule-items">
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="本名・住所・電話番号など個人特定に繋がる情報の投稿は禁止です。" data-en="Do not share real names, addresses, phone numbers, or any identifying information." id="r3-1">本名・住所・電話番号など個人特定に繋がる情報の投稿は禁止です。</p></div>
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="出会い目的のDM送信・勧誘は厳禁です。" data-en="Soliciting romantic connections via DM is strictly forbidden." id="r3-2">出会い目的のDM送信・勧誘は厳禁です。</p></div>
-    </div></div>
-    <div class="card rule-inner"><div class="rule-num">04</div><div class="rule-ttl" data-ja="🔔 メンションの扱い" data-en="🔔 Mentions" id="r4-ttl">🔔 メンションの扱い</div><div class="rule-items">
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="急用でもないのに管理者や特定メンバーへメンションを飛ばしすぎるのは避けましょう。" data-en="Avoid pinging admins or members unnecessarily for non-urgent matters." id="r4-1">急用でもないのに管理者や特定メンバーへメンションを飛ばしすぎるのは避けましょう。</p></div>
-    </div></div>
-    <div class="card rule-inner"><div class="rule-num">05</div><div class="rule-ttl" data-ja="🚫 禁止事項" data-en="🚫 Prohibited Actions" id="r5-ttl">🚫 禁止事項</div><div class="rule-items">
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="荒らし行為：サーバー運営を妨害するすべての行為。" data-en="Trolling: any action that disrupts or harms the server." id="r5-1">荒らし行為：サーバー運営を妨害するすべての行為。</p></div>
-      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。" data-en="Advertising: promoting other servers or SNS outside of the designated channel is prohibited." id="r5-2">宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。</p></div>
-    </div></div>
-  </div>
-  <div class="admin-note">
-    <div class="an-ttl" data-ja="📌 管理者からのお願い" data-en="📌 From the Admins" id="note-ttl">📌 管理者からのお願い</div>
-    <p class="an-txt" data-ja="ルールに違反している人を見かけたら、直接反論せずに「お問い合わせ」または「管理人へのDM」で報告してください。平和な環境作りにご協力をお願いします！" data-en="If you see someone breaking the rules, please don't engage directly — report it via the contact channel or by DMing an admin. Thank you for helping keep this a peaceful place!" id="note-txt">ルールに違反している人を見かけたら、直接反論せずに「お問い合わせ」または「管理人へのDM」で報告してください。平和な環境作りにご協力をお願いします！</p>
-  </div>
+  <div class="anote"><div style="font-size:11px;letter-spacing:.15em;opacity:.5;margin-bottom:9px;text-transform:uppercase" id="an-t" data-j="📌 管理者からのお願い" data-e="📌 From the Admins">📌 管理者からのお願い</div><p style="font-size:13px;opacity:.55;line-height:1.88" id="an-x" data-j="ルールに違反している人を見かけたら、直接反論せずに「お問い合わせ」または「管理人へのDM」で報告してください。平和な環境作りにご協力をお願いします！" data-e="If you see someone breaking the rules, please don't engage directly — report it via the contact channel or by DMing an admin.">ルールに違反している人を見かけたら、直接反論せずに「お問い合わせ」または「管理人へのDM」で報告してください。平和な環境作りにご協力をお願いします！</p></div>
 </section>
 
 <!-- FAQ -->
-<section class="sw reveal" id="sec-faq">
-  <div class="sec-head">
-    <div class="sec-label">— FAQ —</div>
-    <div class="sec-title" data-ja="よくある質問" data-en="FAQ" id="faq-title">よくある質問</div>
-  </div>
-  <div class="faq-list">
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span data-ja="浮上（アクティブ）しても大丈夫ですか？" data-en="Is it okay to be active and chat freely?" id="fq1">浮上（アクティブ）しても大丈夫ですか？</span>
-        <span class="faq-arr">▼</span>
-      </button>
-      <div class="faq-a" data-ja="もちろんです！どんどん話しかけてください。雑談チャンネルはいつでも大歓迎です。自分のペースで参加していただければ嬉しいです。" data-en="Absolutely! Jump right in and chat whenever you like. The chat channel is always open. Just go at your own pace." id="fa1">もちろんです！どんどん話しかけてください。雑談チャンネルはいつでも大歓迎です。自分のペースで参加していただければ嬉しいです。</div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span data-ja="みんな仲良さそうで話に入りづらいのですが…" data-en="Everyone seems close already — hard to break in?" id="fq2">みんな仲良さそうで話に入りづらいのですが…</span>
-        <span class="faq-arr">▼</span>
-      </button>
-      <div class="faq-a" data-ja="気にしなくて大丈夫です！常連メンバーは新しい人が来てくれると嬉しいと思っています。「はじめまして！」と一言投稿するだけで、自然に輪に入れますよ。管理者も積極的にサポートします。" data-en="Don't worry at all! The regulars love meeting new people. Just post a quick 'Hello!' and you'll naturally fit right in. The admins are here to help too." id="fa2">気にしなくて大丈夫です！常連メンバーは新しい人が来てくれると嬉しいと思っています。「はじめまして！」と一言投稿するだけで、自然に輪に入れますよ。管理者も積極的にサポートします。</div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span data-ja="ショップの利用は初めてでも大丈夫ですか？" data-en="Can I use the shop as a first-timer?" id="fq3">ショップの利用は初めてでも大丈夫ですか？</span>
-        <span class="faq-arr">▼</span>
-      </button>
-      <div class="faq-a" data-ja="もちろん大丈夫です！40件以上の実績があり、初心者の方も丁寧にサポートします。疑問があれば管理者（いくすわ）に気軽に聞いてください。" data-en="Of course! With 40+ completed deals, we guide first-timers every step of the way. Just ask いくすわ (ikusuwa) if you have any questions." id="fa3">もちろん大丈夫です！40件以上の実績があり、初心者の方も丁寧にサポートします。疑問があれば管理者（いくすわ）に気軽に聞いてください。</div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span data-ja="参加するのにお金はかかりますか？" data-en="Is there any cost to join?" id="fq4">参加するのにお金はかかりますか？</span>
-        <span class="faq-arr">▼</span>
-      </button>
-      <div class="faq-a" data-ja="サーバーへの参加は完全無料です。ショップのサービスを利用する際は別途ご案内があります。" data-en="Joining the server is completely free. Shop services are explained separately when you use them." id="fa4">サーバーへの参加は完全無料です。ショップのサービスを利用する際は別途ご案内があります。</div>
-    </div>
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
-        <span data-ja="トラブルが起きたらどうすればいいですか？" data-en="What should I do if there's a problem?" id="fq5">トラブルが起きたらどうすればいいですか？</span>
-        <span class="faq-arr">▼</span>
-      </button>
-      <div class="faq-a" data-ja="直接相手に反論せず、管理者（ゆずぴー・じつねこ・いくすわ）のいずれかにDMで報告してください。迅速に対応します。" data-en="Don't confront the person directly — DM one of the admins (ゆずぴー, じつねこ, or いくすわ) and we'll handle it quickly." id="fa5">直接相手に反論せず、管理者（ゆずぴー・じつねこ・いくすわ）のいずれかにDMで報告してください。迅速に対応します。</div>
-    </div>
+<section class="sw rv" id="s-faq">
+  <div class="sh"><div class="sl">— FAQ —</div><div class="st" id="faq-t" data-j="よくある質問" data-e="FAQ">よくある質問</div></div>
+  <div class="fl">
+    <div class="fi"><button class="fq" onclick="tf(this)"><span id="fq1" data-j="浮上（アクティブ）しても大丈夫ですか？" data-e="Is it okay to be active and chat freely?">浮上（アクティブ）しても大丈夫ですか？</span><span class="fa-arr">▼</span></button><div class="fa" id="fa1" data-j="もちろんです！どんどん話しかけてください。雑談チャンネルはいつでも大歓迎です。" data-e="Absolutely! Jump right in and chat whenever you like. Just go at your own pace.">もちろんです！どんどん話しかけてください。雑談チャンネルはいつでも大歓迎です。</div></div>
+    <div class="fi"><button class="fq" onclick="tf(this)"><span id="fq2" data-j="みんな仲良さそうで話に入りづらいのですが…" data-e="Everyone seems close already — hard to break in?">みんな仲良さそうで話に入りづらいのですが…</span><span class="fa-arr">▼</span></button><div class="fa" id="fa2" data-j="気にしなくて大丈夫です！「はじめまして！」と一言投稿するだけで、自然に輪に入れますよ。常連メンバーは新しい人が来てくれると嬉しいと思っています。管理者も積極的にサポートします。" data-e="Don't worry at all! Just post a quick 'Hello!' and you'll naturally fit right in. The admins are here to help too.">気にしなくて大丈夫です！「はじめまして！」と一言投稿するだけで、自然に輪に入れますよ。常連メンバーは新しい人が来てくれると嬉しいと思っています。管理者も積極的にサポートします。</div></div>
+    <div class="fi"><button class="fq" onclick="tf(this)"><span id="fq3" data-j="ショップの利用は初めてでも大丈夫ですか？" data-e="Can I use the shop as a first-timer?">ショップの利用は初めてでも大丈夫ですか？</span><span class="fa-arr">▼</span></button><div class="fa" id="fa3" data-j="もちろん大丈夫です！40件以上の実績があり、初心者の方も丁寧にサポートします。疑問があれば管理者（いくすわ）に気軽に聞いてください。" data-e="Of course! With 40+ completed deals, we guide first-timers every step of the way. Just ask いくすわ if you have any questions.">もちろん大丈夫です！40件以上の実績があり、初心者の方も丁寧にサポートします。疑問があれば管理者（いくすわ）に気軽に聞いてください。</div></div>
+    <div class="fi"><button class="fq" onclick="tf(this)"><span id="fq4" data-j="参加するのにお金はかかりますか？" data-e="Is there any cost to join?">参加するのにお金はかかりますか？</span><span class="fa-arr">▼</span></button><div class="fa" id="fa4" data-j="サーバーへの参加は完全無料です。ショップのサービスを利用する際は別途ご案内があります。" data-e="Joining the server is completely free. Shop services are explained separately.">サーバーへの参加は完全無料です。ショップのサービスを利用する際は別途ご案内があります。</div></div>
+    <div class="fi"><button class="fq" onclick="tf(this)"><span id="fq5" data-j="トラブルが起きたらどうすればいいですか？" data-e="What should I do if there's a problem?">トラブルが起きたらどうすればいいですか？</span><span class="fa-arr">▼</span></button><div class="fa" id="fa5" data-j="直接相手に反論せず、管理者（ゆずぴー・じつねこ・いくすわ）のいずれかにDMで報告してください。迅速に対応します。" data-e="Don't confront the person directly — DM one of the admins and we'll handle it quickly.">直接相手に反論せず、管理者（ゆずぴー・じつねこ・いくすわ）のいずれかにDMで報告してください。迅速に対応します。</div></div>
   </div>
 </section>
 
 <!-- BGM -->
-<div class="bgm-wrap reveal" id="sec-bgm">
-  <div class="card bgm-card">
-    <div class="bgm-sec-lbl">🎵 BGM</div>
-    <div class="bgm-main-lbl" data-ja="ゆずぴーがTikTokで使った曲欄" data-en="Songs used by ゆずぴー on TikTok" id="bgm-lbl">ゆずぴーがTikTokで使った曲欄</div>
-    <div class="bgm-sub-lbl" data-ja="好きな曲を選んでSpotifyで聴こう" data-en="Pick a track and listen on Spotify" id="bgm-sub">好きな曲を選んでSpotifyで聴こう</div>
-    <div class="bgm-tracks">
-      <div class="bgm-track active" onclick="selectTrack(0)">
-        <div class="bgm-dot"></div>
-        <div><div class="bgm-track-name">Track 1</div><div class="bgm-track-sub" data-ja="Spotifyで再生" data-en="Play on Spotify" id="bgm-sub1">Spotifyで再生</div></div>
-      </div>
-      <div class="bgm-track" onclick="selectTrack(1)">
-        <div class="bgm-dot"></div>
-        <div><div class="bgm-track-name">Track 2</div><div class="bgm-track-sub" data-ja="Spotifyで再生" data-en="Play on Spotify" id="bgm-sub2">Spotifyで再生</div></div>
-      </div>
-    </div>
-    <div class="bgm-player-wrap">
-      <iframe id="spotify-frame"
-        src="https://open.spotify.com/embed/track/4lSMRV1kOtIf9oWgww4EkA?utm_source=generator&theme=0"
-        width="100%" height="152" frameBorder="0" allowfullscreen=""
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"></iframe>
-    </div>
+<div class="bmw rv" id="s-bgm">
+  <div class="cd bmc">
+    <div style="font-size:11px;letter-spacing:.25em;opacity:.38;margin-bottom:14px;text-transform:uppercase">🎵 BGM</div>
+    <div style="font-size:14px;font-weight:700;margin-bottom:4px" id="bgm-l" data-j="ゆずぴーがTikTokで使った曲欄" data-e="Songs used by ゆずぴー on TikTok">ゆずぴーがTikTokで使った曲欄</div>
+    <div style="font-size:11px;opacity:.4;margin-bottom:14px" id="bgm-s" data-j="好きな曲を選んでSpotifyで聴こう" data-e="Pick a track and listen on Spotify">好きな曲を選んでSpotifyで聴こう</div>
+    <div class="bmt" id="bmt"></div>
+    <div class="bpw"><iframe id="sp-fr" src="" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
   </div>
 </div>
 
 <!-- CTA -->
-<section class="sw reveal" id="sec-cta" style="padding-bottom:110px;">
-  <div class="card cta-card"><div class="cta-inner">
-    <div class="cta-label-txt">Join Us</div>
-    <div class="cta-ttl" data-ja="今すぐ参加しよう" data-en="Join Us Today" id="cta-ttl">今すぐ参加しよう</div>
-    <p class="cta-desc" data-ja="おいしいコミュニティで、信頼できる仲間と繋がろう。<br>40件以上の実績があなたを待っています。" data-en="Connect with trusted members in Oishii Community.<br>40+ deals are waiting for you." id="cta-desc">おいしいコミュニティで、信頼できる仲間と繋がろう。<br>40件以上の実績があなたを待っています。</p>
-    <button class="btn-white" style="padding:17px 46px;font-size:14px;font-weight:900;" onclick="window.open('https://discord.gg/dcus','_blank')" data-ja="参加する →" data-en="Join Now →" id="cta-btn">参加する →</button>
+<section class="sw rv" id="s-cta" style="padding-bottom:100px">
+  <div class="cd ctac"><div class="ctai">
+    <div style="font-size:11px;letter-spacing:.3em;opacity:.35;margin-bottom:18px;text-transform:uppercase">Join Us</div>
+    <div style="font-size:clamp(22px,4vw,38px);font-weight:900;letter-spacing:-.03em;margin-bottom:11px" id="cta-t" data-j="今すぐ参加しよう" data-e="Join Us Today">今すぐ参加しよう</div>
+    <p style="font-size:13px;opacity:.44;line-height:1.88;margin-bottom:32px" id="cta-d" data-j="おいしいコミュニティで、信頼できる仲間と繋がろう。<br>40件以上の実績があなたを待っています。" data-e="Connect with trusted members in Oishii Community.<br>40+ deals are waiting for you.">おいしいコミュニティで、信頼できる仲間と繋がろう。<br>40件以上の実績があなたを待っています。</p>
+    <button class="bw" style="padding:16px 44px;font-size:14px;font-weight:900" onclick="window.open(_x(),'_blank')" id="cta-b" data-j="参加する →" data-e="Join Now →">参加する →</button>
   </div></div>
 </section>
+<footer style="text-align:center;padding:26px;border-top:1px solid rgba(255,255,255,.05)"><p style="font-size:11px;opacity:.16;letter-spacing:.1em" id="ft-t" data-j="© 2025 おいしいコミュニティ — All Rights Reserved" data-e="© 2025 Oishii Community — All Rights Reserved">© 2025 おいしいコミュニティ — All Rights Reserved</p></footer>
+</div>
 
-<footer>
-  <p class="footer-txt" data-ja="© 2025 おいしいコミュニティ — All Rights Reserved" data-en="© 2025 Oishii Community — All Rights Reserved" id="footer-txt">© 2025 おいしいコミュニティ — All Rights Reserved</p>
-</footer>
+<!-- ══ PAGE: STORY ══ -->
+<div class="page" id="pg-story">
+<section class="sww">
+  <div class="sh" style="margin-top:20px"><div class="sl">— おいしい物語 —</div><div class="st">pixiv 小説一覧</div></div>
+  <p style="text-align:center;font-size:13px;opacity:.45;line-height:1.9;max-width:500px;margin:0 auto 48px">ゆずぴーとコミュニティメンバーが紡いだ、おいしい世界の物語たち。</p>
+  <div class="story-grid">
+    <div class="cd sc rv"><div class="sc-num">01</div><div class="sc-tag">📖 小説 · #二次創作</div><div class="sc-ttl">超美味しい物語</div><p class="sc-desc">ほげほげぴやぴゃーえ? による小説。おいしいコミュニティの世界観を舞台にした物語の第一章。</p><a class="sc-btn" href="https://share.google/xgcisy962FWnkP2gi" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>pixivで読む</a></div>
+    <div class="cd sc rv" style="animation-delay:.12s"><div class="sc-num">02</div><div class="sc-tag">📖 続編 · #夢小説</div><div class="sc-ttl">超美味しい姫</div><p class="sc-desc">「超美味しい物語」の続編。新たなキャラクターが登場し、物語はさらに深みを増す。</p><a class="sc-btn" href="https://share.google/ugnP2HEjNdjPkLokW" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>pixivで読む</a></div>
+    <div class="cd sc rv" style="animation-delay:.24s"><div class="sc-num">03</div><div class="sc-tag">📖 最終続編 · #夢小説</div><div class="sc-ttl">超ライダータイム</div><p class="sc-desc">シリーズ完結編。すべての伏線が回収される、おいしい世界の最後を飾る物語。</p><a class="sc-btn" href="https://share.google/8ncP4SO6LwKHaMWrb" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>pixivで読む</a></div>
+  </div>
+</section>
+</div>
+
+<!-- ══ PAGE: HISTORY ══ -->
+<div class="page" id="pg-history">
+<section class="sw">
+  <div class="sh" style="margin-top:20px"><div class="sl">— おいしいの歴史 —</div><div class="st">私たちの軌跡</div></div>
+  <div class="tl rv">
+    <div class="te">
+      <div class="te-date">2023年</div>
+      <div class="te-ttl">🎮 IKSクランの時代</div>
+      <p class="te-txt">ゆずぴー・じつねこ・いくすわ・すーは、IKSというクランで出会い、2023年頃から仲を深めた。ゲームを通じて絆を築いていったが、やがてIKSは崩壊。それぞれは一時、疎遠になっていく。</p>
+    </div>
+    <div class="te milestone">
+      <div class="te-date">2025年8月</div>
+      <div class="te-ttl">🌸 再会とサーバー誕生</div>
+      <p class="te-txt">じつねこがTikTokを見ていたある日、ゆずぴーを偶然発見。コメントでやり取りが始まり「俺たちでサーバー作ろう」という話になった。</p>
+      <div class="te-special">
+        <div class="te-tag">初代サーバー</div>
+        <div style="font-size:16px;font-weight:900;margin-bottom:6px">poop.exe</div>
+        <p style="font-size:13px;opacity:.55;line-height:1.85">おいしいコミュニティの原点。最初、じつねこはメンバーとして参加。管理者はすー・ゆずぴー・いくすわ・ゆきみの4名だった。</p>
+      </div>
+    </div>
+    <div class="te">
+      <div class="te-date">poop.exe 時代</div>
+      <div class="te-ttl">⚡ 管理者の交代と成長</div>
+      <p class="te-txt">ゆきみによる職権乱用の告発をきっかけに管理者体制が変わり、じつねこがサーバーを引っ張る管理者として昇格。メンバーも増え、サーバーは発展していった。</p>
+    </div>
+    <div class="te crisis">
+      <div class="te-date">poop.exe 末期</div>
+      <div class="te-ttl">🚨 鯖制限・荒らし・移行</div>
+      <p class="te-txt">突如として鯖制限が発動。画像も送れず、誰も入れない状態になりサーバーの移行を余儀なくされた。その混乱の中、えだまめという人物による荒らし被害も発生し、以降は疎遠となった。</p>
+    </div>
+    <div class="te milestone">
+      <div class="te-date">移行後</div>
+      <div class="te-ttl">✨ 美味しいコミュニティの誕生</div>
+      <div class="te-special">
+        <div class="te-tag">第2代サーバー</div>
+        <div style="font-size:16px;font-weight:900;margin-bottom:6px">美味しいコミュニティ</div>
+        <p style="font-size:13px;opacity:.55;line-height:1.85">メンバー公募はせず、管理者は固定制。新たな体制で再スタートを切った。</p>
+      </div>
+    </div>
+    <div class="te crisis">
+      <div class="te-date">移行直後</div>
+      <div class="te-ttl">💔 「姫」事件とすーのNuke</div>
+      <div class="te-crisis-box">
+        <p style="font-size:13px;opacity:.65;line-height:1.88">新サーバーになってまもなく、鯖民「姫」が自傷行為をほのめかし、コミュニティ全体を巻き込む事態となった。それに呆れたすーは美味しい鯖をNukeし、縁を切った。</p>
+      </div>
+    </div>
+    <div class="te crisis">
+      <div class="te-date">1000人規模時代</div>
+      <div class="te-ttl">💥 じつねこ管理者剥奪事件</div>
+      <p class="te-txt">メンバーが1000人規模に成長したころ、事件が起きた——じつねこの管理者剥奪。激怒したじつねこはサーバーを退出し、全員と疎遠になった。「みんなで作ったのに、どうして」と嘆くメンバーも多かった。しかし最終的には許され、じつねこは管理者として復帰した。</p>
+    </div>
+    <div class="te">
+      <div class="te-date">2000人時代</div>
+      <div class="te-ttl">👑 ゆきみの管理者復帰と新たな課題</div>
+      <p class="te-txt">ゆきみが管理者として復帰した。復帰自体はめでたいことだったが、アナウンスでのエブリワン（@everyone）の多用が問題に。浮上勢はだんだん限られてきてしまった。</p>
+    </div>
+    <div class="te milestone">
+      <div class="te-date">3000人突破前夜</div>
+      <div class="te-ttl">🎮 ゆずぴーの大バズり・60万再生</div>
+      <div class="te-special">
+        <div class="te-tag">大事件</div>
+        <div style="font-size:15px;font-weight:900;margin-bottom:8px">📹 60万再生の衝撃</div>
+        <p style="font-size:13px;opacity:.55;line-height:1.85">ゆずぴーはRobloxのpoophubの制作者。その頭脳を活かし、有名アニメのワンシーンの技をRobloxのチートで再現した動画が爆発的にバズり、60万再生を記録。これが3000人突破の大きなカギとなった。</p>
+      </div>
+    </div>
+    <div class="te milestone">
+      <div class="te-date">2026年</div>
+      <div class="te-ttl">🎉 3000人突破・そして移行へ</div>
+      <p class="te-txt">ついにメンバーが3000人を突破。しかし、所有権を持ついくすわのアカウントに登録されていたメールアドレスが死亡していたことが判明。3000人突破を機に新サーバーへの移行を決断。旧サーバーは無法地帯と化した。</p>
+    </div>
+    <div class="te">
+      <div class="te-date">現在</div>
+      <div class="te-ttl">🍽️ おいしいコミュニティ、今へ</div>
+      <p class="te-txt">数々の事件と試練を乗り越えた私たちは、雑談とショップを両軸にした現在の「おいしいコミュニティ」へと辿り着いた。これからも、おいしい時間を一緒に作っていこう。</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ══ PAGE: TEAM ══ -->
+<div class="page" id="pg-team">
+<section class="sww">
+  <div class="sh" style="margin-top:20px"><div class="sl">— Team —</div><div class="st" id="team-t" data-j="管理者紹介" data-e="Meet the Team">管理者紹介</div></div>
+  <div class="ag">
+    <div class="cd cd-a"><div class="ai"><div class="aaw"><div class="aa" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4)">Y</div><div class="ab"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div></div><div class="an">ゆずぴー</div><span class="art" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25)" id="ry" data-j="👑 鯖主" data-e="👑 Server Owner">👑 鯖主</span><p class="ad" id="dy" data-j="おいしいコミュニティの設立者。メンバーが安心して楽しめるサーバー作りを常に心がけています。何かあればお気軽にDMを！" data-e="Founder of Oishii Community. Always working to keep the server a safe and fun place. Feel free to DM anytime!">おいしいコミュニティの設立者。メンバーが安心して楽しめるサーバー作りを常に心がけています。何かあればお気軽にDMを！</p></div></div>
+    <div class="cd cd-a"><div class="ai"><div class="aaw"><div class="aa" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.35)">J</div><div class="ab"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div class="an">じつねこ</div><span class="art" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2)" id="rj" data-j="🛡️ サブオーナー" data-e="🛡️ Sub-Owner">🛡️ サブオーナー</span><p class="ad" id="dj" data-j="サーバーの裏方として日々サポート中。ルール違反や困りごとは気軽に相談してください。みんなが居心地よく過ごせるよう頑張ります！" data-e="Supporting the server behind the scenes every day. Feel free to reach out about any issues.">サーバーの裏方として日々サポート中。ルール違反や困りごとは気軽に相談してください。みんなが居心地よく過ごせるよう頑張ります！</p></div></div>
+    <div class="cd cd-a"><div class="ai"><div class="aaw"><div class="aa" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.3)">I</div><div class="ab"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div class="an">いくすわ</div><span class="art" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)" id="ri" data-j="⚙️ 管理者" data-e="⚙️ Admin">⚙️ 管理者</span><p class="ad" id="di" data-j="主にショップ周りとメンバー対応を担当しています。取引についての疑問や不安はいつでも声をかけてください！" data-e="Handles shop operations and member support. Don't hesitate to ask about any trading questions!">主にショップ周りとメンバー対応を担当しています。取引についての疑問や不安はいつでも声をかけてください！</p></div></div>
+  </div>
+</section>
+</div>
 
 <script>
-// ── Language switcher ─────────────────────────────────────────────
-let currentLang = 'ja';
+// ── Obfuscated invite link ────────────────────────────────────────
+var _0d=['\x68\x74\x74\x70\x73','\x3a','\x2f\x2f','\x64\x69\x73\x63\x6f\x72\x64','\x2e','\x67\x67','\x2f','\x64\x63\x75\x73'];
+function _x(){return _0d[0]+_0d[1]+_0d[2]+_0d[3]+_0d[4]+_0d[5]+_0d[6]+_0d[7];}
 
-function toggleLang() {
-  currentLang = currentLang === 'ja' ? 'en' : 'ja';
-  document.getElementById('lang-btn').textContent = currentLang === 'ja' ? 'EN' : '日本語';
-  document.documentElement.lang = currentLang;
+// ── Obfuscated Spotify IDs ────────────────────────────────────────
+var _sp=(function(){
+  var a='\x34\x6c\x53\x4d\x52\x56\x31\x6b\x4f\x74\x49\x66\x39\x6f\x57\x67\x77\x77\x34\x45\x6b\x41';
+  var b='\x34\x76\x31\x38\x7a\x6b\x30\x47\x62\x52\x42\x4f\x76\x59\x4d\x33\x54\x58\x6d\x69\x61\x4c';
+  var c='\x33\x61\x34\x6f\x71\x59\x49\x51\x77\x63\x72\x45\x59\x4d\x76\x42\x71\x52\x44\x4f\x61\x4a';
+  var d='\x32\x70\x49\x6c\x65\x41\x41\x59\x33\x57\x6c\x38\x33\x5a\x4d\x65\x72\x37\x72\x43\x69\x71';
+  var e='\x35\x54\x54\x68\x6d\x46\x68\x42\x6a\x35\x47\x70\x76\x35\x55\x4b\x49\x43\x67\x66\x56\x4d';
+  return [a,b,c,d,e];
+})();
 
-  // Update all elements with data-ja / data-en
-  document.querySelectorAll('[data-ja][data-en]').forEach(el => {
-    const val = el.getAttribute('data-' + currentLang);
-    if (val !== null) el.innerHTML = val;
+// ── Build BGM ────────────────────────────────────────────────────
+(function(){
+  var c=document.getElementById('bmt');
+  _sp.forEach(function(id,i){
+    var d=document.createElement('div');
+    d.className='bmi'+(i===0?' on':'');
+    d.onclick=function(){_sel(i);};
+    d.innerHTML='<div class="bmd"></div><div><div style="font-size:13px;font-weight:600">Track '+(i+1)+'</div><div style="font-size:11px;opacity:.42;margin-top:2px">Spotify で再生</div></div>';
+    c.appendChild(d);
   });
-
-  // Hero h1 special (keep line break)
-  const h1 = document.getElementById('hero-h1');
-  h1.innerHTML = currentLang === 'ja'
-    ? 'おいしい<br>コミュニティ'
-    : 'Oishii<br>Community';
-
-  // Logo flip text
-  document.getElementById('logo-a').textContent = currentLang === 'ja' ? 'おいしいコミュニティ' : 'Oishii Community';
-  document.getElementById('logo-b').textContent = currentLang === 'ja' ? '美味しいコミュニティ' : 'Oishii Community ✦';
-
-  // Weather label (keep current weather state)
-  updateWeatherLabel();
+  document.getElementById('sp-fr').src='https://open.spotify.com/embed/track/'+_sp[0]+'?utm_source=generator&theme=0';
+})();
+function _sel(i){
+  document.querySelectorAll('.bmi').forEach(function(t,j){t.classList.toggle('on',j===i);});
+  document.getElementById('sp-fr').src='https://open.spotify.com/embed/track/'+_sp[i]+'?utm_source=generator&theme=0';
 }
 
-// ── Intersection Observer ─────────────────────────────────────────
-const revealObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+// ── SPLASH (typing effect) ────────────────────────────────────────
+(function(){
+  var txt='おいしいコミュニティ', el=document.getElementById('sp-txt'), bar=document.getElementById('sp-bar'), sub=document.getElementById('sp-sub'), splash=document.getElementById('splash'), i=0;
+  function type(){
+    if(i<=txt.length){el.textContent=txt.slice(0,i);i++;bar.style.width=(i/txt.length*70)+'%';setTimeout(type,80);}
+    else{
+      sub.style.opacity='1';
+      var p=70,iv=setInterval(function(){p=Math.min(p+3,100);bar.style.width=p+'%';if(p>=100){clearInterval(iv);setTimeout(function(){splash.classList.add('hide');},400);}},20);
+    }
+  }
+  setTimeout(type,300);
+})();
+
+// ── Member growth graph ───────────────────────────────────────────
+var _gdata=[{l:'poop.exe\n誕生',v:50,h:false},{l:'管理者\n交代',v:200,h:false},{l:'美味しい\n誕生',v:400,h:false},{l:'1000人',v:1000,h:false},{l:'2000人',v:2000,h:false},{l:'動画\nバズ',v:2800,h:true},{l:'3000人\n突破',v:3000,h:true}];
+(function(){
+  var wrap=document.getElementById('mg-bars');
+  var max=3000;
+  _gdata.forEach(function(d,i){
+    var div=document.createElement('div');
+    div.className='mg-bar-wrap';
+    var pct=Math.round((d.v/max)*100);
+    div.innerHTML='<div class="mg-bar-val">'+( d.v>=1000?(d.v/1000).toFixed(0)+'K' : d.v)+'</div>'+'<div class="mg-bar'+(d.h?' mg-bar-hi':'')+'" data-h="'+pct+'" style="height:0px"></div>'+'<div class="mg-bar-lbl" style="white-space:pre-wrap;font-size:8px;line-height:1.3">'+d.l+'</div>';
+    wrap.appendChild(div);
+  });
+  var _go=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        document.querySelectorAll('.mg-bar').forEach(function(b){
+          var h=parseInt(b.getAttribute('data-h'));
+          b.style.transition='height 1.2s cubic-bezier(.16,1,.3,1)';
+          b.style.height=(h*1.15)+'px';
+        });
+        _go.disconnect();
+      }
+    });
+  },{threshold:0.3});
+  var gs=document.getElementById('s-graph');
+  if(gs) _go.observe(gs);
+})();
+
+// ── Page switching ────────────────────────────────────────────────
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(function(){
+    document.querySelectorAll('#pg-'+id+' .rv:not(.in)').forEach(function(el){_ro.observe(el);});
+  },60);
+}
+
+// ── Lang ──────────────────────────────────────────────────────────
+var _lang='ja';
+function tlng(){
+  _lang=_lang==='ja'?'en':'ja';
+  document.getElementById('lb').textContent=_lang==='ja'?'EN':'日本語';
+  document.getElementById('nb').textContent=_lang==='ja'?'参加する':'Join';
+  document.documentElement.lang=_lang;
+  document.querySelectorAll('[data-j][data-e]').forEach(function(el){
+    var v=el.getAttribute('data-'+(_lang==='ja'?'j':'e'));
+    if(v!==null) el.innerHTML=v;
+  });
+  document.getElementById('hh1').innerHTML=_lang==='ja'?'おいしい<br>コミュニティ':'Oishii<br>Community';
+  _uwl();
+}
+
+// ── Logo flip ─────────────────────────────────────────────────────
+var _ll=['おいしいコミュニティ','美味しいコミュニティ'],_li=0,_lt=document.getElementById('logo-txt');
+setInterval(function(){
+  _lt.style.opacity='0';_lt.style.transform='translateY(-7px)';
+  setTimeout(function(){_li=(_li+1)%_ll.length;_lt.textContent=_ll[_li];_lt.style.opacity='1';_lt.style.transform='translateY(0)';},220);
+},3500);
+
+// ── Reveal ────────────────────────────────────────────────────────
+var _ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting) e.target.classList.add('in');});},{threshold:0.08});
+document.querySelectorAll('.rv').forEach(function(el){_ro.observe(el);});
 
 // ── Ratio bar ─────────────────────────────────────────────────────
-const shopObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const bar = document.getElementById('ratio-bar');
-      bar.style.transition = 'width 1.3s cubic-bezier(.16,1,.3,1) .3s';
-      bar.style.width = '60%';
-    }
-  });
-}, { threshold: 0.2 });
-shopObs.observe(document.getElementById('shop'));
+var _rbo=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting) document.getElementById('rbar').style.width='60%';});},{threshold:0.2});
+var _se=document.getElementById('s-shop');if(_se) _rbo.observe(_se);
 
-// ── Count-up animation ────────────────────────────────────────────
-let countsDone = false;
-function animateCount(id, target, suffix, duration) {
-  const el = document.getElementById(id);
-  let start = 0;
-  const step = Math.ceil(target / (duration / 16));
-  const timer = setInterval(() => {
-    start = Math.min(start + step, target);
-    el.textContent = start + suffix;
-    if (start >= target) clearInterval(timer);
-  }, 16);
-}
-const statsObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting && !countsDone) {
-      countsDone = true;
-      animateCount('count-deals', 40, '+', 1200);
-      animateCount('count-members', 100, '+', 1400);
-      animateCount('count-sat', 98, '%', 1300);
-      let r = 0;
-      const rt = setInterval(() => {
-        r = Math.min(+(r + 0.1).toFixed(1), 5.0);
-        document.getElementById('count-rating').textContent = r.toFixed(1);
-        if (r >= 5.0) clearInterval(rt);
-      }, 25);
-    }
-  });
-}, { threshold: 0.3 });
-statsObs.observe(document.getElementById('sec-stats'));
+// ── Count-up ──────────────────────────────────────────────────────
+var _cd=false;
+function _ac(id,target,sfx,dur){var el=document.getElementById(id),s=0,step=Math.ceil(target/(dur/16));var t=setInterval(function(){s=Math.min(s+step,target);el.textContent=s+sfx;if(s>=target)clearInterval(t);},16);}
+var _co=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!_cd){_cd=true;_ac('c-deals',40,'+',1200);_ac('c-mem',100,'+',1400);_ac('c-sat',98,'%',1300);var r=0,rt=setInterval(function(){r=Math.min(+(r+.1).toFixed(1),5);document.getElementById('c-rat').textContent=r.toFixed(1);if(r>=5)clearInterval(rt);},25);}});},{threshold:0.3});
+var _ss=document.getElementById('s-stats');if(_ss)_co.observe(_ss);
 
 // ── FAQ ───────────────────────────────────────────────────────────
-function toggleFaq(btn) {
-  const answer = btn.nextElementSibling;
-  const arrow = btn.querySelector('.faq-arr');
-  const isOpen = answer.classList.contains('open');
-  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
-  document.querySelectorAll('.faq-arr').forEach(a => a.classList.remove('open'));
-  if (!isOpen) { answer.classList.add('open'); arrow.classList.add('open'); }
-}
-
-// ── BGM ───────────────────────────────────────────────────────────
-const trackIds = ['4lSMRV1kOtIf9oWgww4EkA', '4v18zk0GbRBOvYM3TXmiaL'];
-function selectTrack(idx) {
-  document.querySelectorAll('.bgm-track').forEach((t, i) => t.classList.toggle('active', i === idx));
-  document.getElementById('spotify-frame').src =
-    'https://open.spotify.com/embed/track/' + trackIds[idx] + '?utm_source=generator&theme=0';
-}
+function tf(btn){var a=btn.nextElementSibling,ar=btn.querySelector('.fa-arr'),o=a.classList.contains('op');document.querySelectorAll('.fa').forEach(function(x){x.classList.remove('op');});document.querySelectorAll('.fa-arr').forEach(function(x){x.classList.remove('op');});if(!o){a.classList.add('op');ar.classList.add('op');}}
 
 // ── Weather ───────────────────────────────────────────────────────
-let weatherMode = 'none';
-const weatherStates = ['none', 'rain', 'snow'];
-const weatherData = {
-  none: { icon: '☀️', ja: '晴れ', en: 'Clear' },
-  rain: { icon: '🌧️', ja: '雨',   en: 'Rain'  },
-  snow: { icon: '❄️', ja: '雪',   en: 'Snow'  },
-};
-
-function updateWeatherLabel() {
-  const d = weatherData[weatherMode];
-  document.getElementById('weather-icon').textContent = d.icon;
-  document.getElementById('weather-label').textContent = d[currentLang];
-}
-
-function cycleWeather() {
-  const idx = weatherStates.indexOf(weatherMode);
-  weatherMode = weatherStates[(idx + 1) % weatherStates.length];
-  updateWeatherLabel();
-  initWeather();
-}
-
-const wCanvas = document.getElementById('weather-canvas');
-const wCtx = wCanvas.getContext('2d');
-let wAF = null, wPts = [];
-
-function resizeWCanvas() { wCanvas.width = window.innerWidth; wCanvas.height = window.innerHeight; }
-resizeWCanvas();
-window.addEventListener('resize', resizeWCanvas);
-
-function initWeather() {
-  cancelAnimationFrame(wAF);
-  wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
-  wPts = [];
-  if (weatherMode === 'none') return;
-  if (weatherMode === 'rain') {
-    for (let i = 0; i < 130; i++) wPts.push({
-      x: Math.random() * wCanvas.width, y: Math.random() * wCanvas.height,
-      len: Math.random() * 16 + 8, speed: Math.random() * 7 + 10,
-      op: Math.random() * 0.3 + 0.1, w: Math.random() * 0.7 + 0.3
-    });
-  } else {
-    for (let i = 0; i < 90; i++) wPts.push({
-      x: Math.random() * wCanvas.width, y: Math.random() * wCanvas.height,
-      r: Math.random() * 3 + 1, speed: Math.random() * 1.1 + 0.4,
-      drift: Math.random() * 0.5 - 0.25, op: Math.random() * 0.45 + 0.15,
-      wob: Math.random() * Math.PI * 2
-    });
-  }
-  drawWeather();
-}
-
-function drawWeather() {
-  wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
-  if (weatherMode === 'rain') {
-    wPts.forEach(p => {
-      wCtx.beginPath(); wCtx.moveTo(p.x, p.y); wCtx.lineTo(p.x - p.len * 0.14, p.y + p.len);
-      wCtx.strokeStyle = 'rgba(180,220,255,' + p.op + ')'; wCtx.lineWidth = p.w; wCtx.stroke();
-      p.y += p.speed; p.x -= p.speed * 0.07;
-      if (p.y > wCanvas.height) { p.y = -p.len; p.x = Math.random() * wCanvas.width; }
-    });
-  } else if (weatherMode === 'snow') {
-    wPts.forEach(p => {
-      p.wob += 0.018;
-      wCtx.beginPath(); wCtx.arc(p.x + Math.sin(p.wob) * 1.8, p.y, p.r, 0, Math.PI * 2);
-      wCtx.fillStyle = 'rgba(255,255,255,' + p.op + ')'; wCtx.fill();
-      p.y += p.speed; p.x += p.drift;
-      if (p.y > wCanvas.height) { p.y = -p.r; p.x = Math.random() * wCanvas.width; }
-      if (p.x > wCanvas.width) p.x = 0; if (p.x < 0) p.x = wCanvas.width;
-    });
-  }
-  wAF = requestAnimationFrame(drawWeather);
-}
+var _wm='none',_ws=['none','rain','snow'],_wd={none:{i:'☀️',j:'晴れ',e:'Clear'},rain:{i:'🌧️',j:'雨',e:'Rain'},snow:{i:'❄️',j:'雪',e:'Snow'}};
+function _uwl(){document.getElementById('wi').textContent=_wd[_wm].i;document.getElementById('wl').textContent=_wd[_wm][_lang==='ja'?'j':'e'];}
+function cw(){_wm=_ws[(_ws.indexOf(_wm)+1)%3];_uwl();_iw();}
+var _wc=document.getElementById('wc'),_wct=_wc.getContext('2d'),_waf=null,_wp=[];
+function _rs(){_wc.width=window.innerWidth;_wc.height=window.innerHeight;}_rs();window.addEventListener('resize',_rs);
+function _iw(){cancelAnimationFrame(_waf);_wct.clearRect(0,0,_wc.width,_wc.height);_wp=[];if(_wm==='none')return;if(_wm==='rain'){for(var i=0;i<130;i++)_wp.push({x:Math.random()*_wc.width,y:Math.random()*_wc.height,l:Math.random()*16+8,s:Math.random()*7+10,o:Math.random()*.3+.1,w:Math.random()*.7+.3});}else{for(var i=0;i<90;i++)_wp.push({x:Math.random()*_wc.width,y:Math.random()*_wc.height,r:Math.random()*3+1,s:Math.random()*1.1+.4,d:Math.random()*.5-.25,o:Math.random()*.45+.15,wb:Math.random()*Math.PI*2});}_dw();}
+function _dw(){_wct.clearRect(0,0,_wc.width,_wc.height);if(_wm==='rain'){_wp.forEach(function(p){_wct.beginPath();_wct.moveTo(p.x,p.y);_wct.lineTo(p.x-p.l*.14,p.y+p.l);_wct.strokeStyle='rgba(180,220,255,'+p.o+')';_wct.lineWidth=p.w;_wct.stroke();p.y+=p.s;p.x-=p.s*.07;if(p.y>_wc.height){p.y=-p.l;p.x=Math.random()*_wc.width;}});}else if(_wm==='snow'){_wp.forEach(function(p){p.wb+=.018;_wct.beginPath();_wct.arc(p.x+Math.sin(p.wb)*1.8,p.y,p.r,0,Math.PI*2);_wct.fillStyle='rgba(255,255,255,'+p.o+')';_wct.fill();p.y+=p.s;p.x+=p.d;if(p.y>_wc.height){p.y=-p.r;p.x=Math.random()*_wc.width;}if(p.x>_wc.width)p.x=0;if(p.x<0)p.x=_wc.width;});}_waf=requestAnimationFrame(_dw);}
 </script>
 </body>
 </html>
