@@ -1,487 +1,634 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>美味しいコミュニティ</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
-        
-        body {
-            margin: 0;
-            background: #080808;
-            color: white;
-            font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-            overflow-x: hidden;
-            cursor: none !important;
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>おいしいコミュニティ</title>
+<style>
+:root{--glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.10);--glass-hover:rgba(255,255,255,0.07);}
+*{margin:0;padding:0;box-sizing:border-box;cursor:default;}
+html{scroll-behavior:smooth;}
+body{background:#080808;color:white;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP','Hiragino Sans',sans-serif;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:1;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:60px 60px;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(255,255,255,.03) 0%,transparent 70%);}
 
-        @keyframes float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-18px) } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(34px) } to { opacity: 1; transform: translateY(0) } }
-        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes shimmer { 0% { background-position: -200% center } 100% { background-position: 200% center } }
-        @keyframes pulseRing { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1) } 50% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0) } }
-        @keyframes petalFade { 0% { opacity: .7; transform: translateY(0) scale(1) } 100% { opacity: 0; transform: translateY(24px) scale(.35) } }
-        @keyframes barGrow { from { width: 0 } to { width: 55% } }
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes pulseRing{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.1)}50%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
+@keyframes adminPulse{0%,100%{opacity:.8}50%{opacity:1}}
+@keyframes logoFlip{0%,42%{opacity:1;transform:translateY(0)}47%{opacity:0;transform:translateY(-6px)}52%{opacity:0;transform:translateY(6px)}57%,100%{opacity:1;transform:translateY(0)}}
 
-        .reveal { opacity: 0; transform: translateY(34px); transition: all .85s cubic-bezier(.16, 1, .3, 1); }
-        .revealed { opacity: 1; transform: translateY(0); }
-        
-        .shimmer-text {
-            background: linear-gradient(90deg, #fff 0%, #fff 36%, rgba(255, 255, 255, .3) 50%, #fff 64%, #fff 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 4.5s linear infinite;
-        }
+.reveal{opacity:0;transform:translateY(34px);}
+.revealed{animation:fadeUp .85s cubic-bezier(.16,1,.3,1) forwards;}
 
-        .gb {
-            background: rgba(255, 255, 255, .07);
-            backdrop-filter: blur(18px);
-            border: 1px solid rgba(255, 255, 255, .17);
-            transition: all .3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .1);
-        }
-        .gb:hover {
-            background: rgba(255, 255, 255, .14);
-            border-color: rgba(255, 255, 255, .36);
-            transform: translateY(-2px);
-        }
+.card{background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.09);transition:all .4s cubic-bezier(.16,1,.3,1);}
+.card:hover{transform:translateY(-4px);background:var(--glass-hover);border-color:rgba(255,255,255,.18);box-shadow:0 24px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.13);}
+.card-admin{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.22);}
 
-        .cb {
-            background: white;
-            color: black;
-            transition: all .3s cubic-bezier(.16, 1, .3, 1);
-            animation: pulseRing 3s ease-in-out infinite;
-        }
-        .cb:hover {
-            background: rgba(255, 255, 255, .88);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 12px 40px rgba(255, 255, 255, .2);
-        }
+.btn-glass{background:rgba(255,255,255,.07);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.17);color:white;border-radius:100px;padding:9px 20px;font-size:12px;letter-spacing:.08em;box-shadow:0 4px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.1);transition:all .3s ease;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit;white-space:nowrap;}
+.btn-glass:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.36);transform:translateY(-2px);}
+.btn-white{background:white;color:black;border:none;border-radius:100px;padding:10px 24px;font-size:12px;letter-spacing:.1em;font-weight:700;animation:pulseRing 3s ease-in-out infinite;transition:all .3s cubic-bezier(.16,1,.3,1);cursor:pointer;font-family:inherit;}
+.btn-white:hover{background:rgba(255,255,255,.88);transform:translateY(-2px) scale(1.02);box-shadow:0 12px 40px rgba(255,255,255,.2);}
 
-        .ch { transition: all .4s cubic-bezier(.16, 1, .3, 1); }
-        .ch:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 24px 48px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .15) !important;
-            border-color: rgba(255, 255, 255, .2) !important;
-            background: rgba(255, 255, 255, .07) !important;
-        }
+.shimmer{background:linear-gradient(90deg,#fff 0%,#fff 36%,rgba(255,255,255,.3) 50%,#fff 64%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4.5s linear infinite;}
 
-        .bar-anim { animation: barGrow 1.3s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: .3s; width: 0; }
-        
-        * { cursor: none !important; }
-    </style>
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.055);}
+.nav-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+.logo-wrap{position:relative;height:20px;overflow:hidden;min-width:175px;}
+.logo-a,.logo-b{position:absolute;top:0;left:0;font-size:13px;font-weight:900;letter-spacing:.1em;white-space:nowrap;}
+.logo-a{animation:logoFlip 6s ease-in-out infinite;}
+.logo-b{animation:logoFlip 6s ease-in-out infinite;animation-delay:3s;opacity:0;}
+
+#hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100vh;padding:80px 24px 0;}
+.hero-label{display:flex;align-items:center;justify-content:center;gap:12px;animation:fadeIn 1s ease forwards;opacity:0;animation-delay:.15s;margin-bottom:22px;}
+.hero-line{width:36px;height:1px;background:rgba(255,255,255,.22);}
+.hero-tag{font-size:11px;letter-spacing:.3em;opacity:.38;text-transform:uppercase;}
+.hero-h1{font-size:clamp(50px,11vw,108px);font-weight:900;letter-spacing:-.035em;line-height:1.04;margin-bottom:18px;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.3s;}
+.hero-sub{font-size:clamp(13px,1.8vw,16px);opacity:.42;letter-spacing:.07em;margin-bottom:46px;line-height:1.88;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.5s;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;opacity:0;animation-delay:.7s;}
+.scroll-hint{position:absolute;bottom:34px;animation:fadeIn 2s ease forwards;opacity:0;animation-delay:1.3s;}
+.scroll-hint svg{opacity:.22;animation:float 2.3s ease-in-out infinite;}
+
+.sw{padding:64px 24px;max-width:880px;margin:0 auto;}
+.sww{padding:64px 24px;max-width:1100px;margin:0 auto;}
+.sec-label{font-size:11px;letter-spacing:.3em;opacity:.35;margin-bottom:12px;text-transform:uppercase;}
+.sec-title{font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-.03em;}
+.sec-head{text-align:center;margin-bottom:50px;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;}
+.stat-inner{padding:30px 18px;text-align:center;}
+.stat-num{font-size:clamp(32px,5vw,44px);font-weight:900;letter-spacing:-.03em;margin-bottom:5px;}
+.stat-lbl{font-size:11px;opacity:.35;letter-spacing:.12em;}
+
+.shop-layout{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start;}
+.shop-left{flex:1;min-width:230px;}
+.shop-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:7px 16px;border-radius:100px;font-size:12px;letter-spacing:.1em;margin-bottom:20px;}
+.shop-ttl{font-size:clamp(19px,3vw,29px);font-weight:900;letter-spacing:-.02em;margin-bottom:12px;line-height:1.38;}
+.shop-desc{font-size:13px;opacity:.46;line-height:1.92;margin-bottom:22px;}
+.shop-pts{display:flex;flex-direction:column;gap:9px;margin-bottom:28px;}
+.shop-pt{display:flex;align-items:center;gap:10px;}
+.pdw{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pd{width:5px;height:5px;border-radius:50%;background:white;}
+.pt-txt{font-size:13px;opacity:.65;}
+.ratio-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:20px 22px;}
+.ratio-row{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap;}
+.rdot{width:9px;height:9px;border-radius:50%;}
+.rtxt{font-size:12px;opacity:.72;}
+.rbar-bg{height:7px;border-radius:100px;background:rgba(255,255,255,.09);overflow:hidden;}
+.rbar{height:100%;background:linear-gradient(90deg,rgba(255,255,255,.92),rgba(255,255,255,.48));border-radius:100px;width:0;}
+.shop-circle{width:clamp(105px,17vw,145px);height:clamp(105px,17vw,145px);border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 55px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.09);}
+.shop-num{font-size:clamp(30px,5vw,46px);font-weight:900;}
+.shop-sub-lbl{font-size:10px;opacity:.34;letter-spacing:.12em;}
+.shop-right{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.admin-inner{padding:28px;}
+.adm-av-wrap{position:relative;margin-bottom:16px;}
+.adm-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;}
+.adm-badge{position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;animation:adminPulse 2.5s ease-in-out infinite;}
+.adm-name{font-size:18px;font-weight:900;margin-bottom:4px;}
+.adm-role-tag{display:inline-block;font-size:10px;letter-spacing:.12em;padding:3px 10px;border-radius:100px;margin-bottom:12px;}
+.adm-desc{font-size:13px;opacity:.52;line-height:1.88;}
+
+.voices-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:12px;}
+.voice-inner{padding:22px;}
+.voice-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.vav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.vav-n{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);}
+.vav-a{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);}
+.v-name{font-size:13px;font-weight:700;}
+.v-role{font-size:10px;opacity:.35;}
+.v-role-a{opacity:.75;}
+.v-stars{font-size:12px;letter-spacing:1px;margin-bottom:8px;}
+.v-txt{font-size:12px;opacity:.54;line-height:1.88;margin-top:10px;}
+
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+.rule-inner{padding:24px;}
+.rule-num{font-size:28px;font-weight:900;opacity:.12;letter-spacing:-.03em;margin-bottom:8px;}
+.rule-ttl{font-size:15px;font-weight:900;margin-bottom:10px;}
+.rule-items{display:flex;flex-direction:column;gap:8px;}
+.rule-item{display:flex;gap:8px;align-items:flex-start;}
+.rbullet{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.4);flex-shrink:0;margin-top:8px;}
+.rule-txt{font-size:12px;opacity:.55;line-height:1.75;}
+.admin-note{margin-top:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:20px 22px;}
+.an-ttl{font-size:12px;letter-spacing:.15em;opacity:.5;margin-bottom:10px;text-transform:uppercase;}
+.an-txt{font-size:13px;opacity:.55;line-height:1.88;}
+
+.faq-list{display:flex;flex-direction:column;gap:10px;}
+.faq-item{border-radius:14px;overflow:hidden;border:1px solid var(--glass-border);background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.faq-q{width:100%;background:none;border:none;color:white;padding:18px 20px;font-size:14px;font-weight:700;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:inherit;cursor:pointer;transition:background .2s;}
+.faq-q:hover{background:rgba(255,255,255,.04);}
+.faq-arr{font-size:12px;opacity:.5;transition:transform .3s;flex-shrink:0;}
+.faq-arr.open{transform:rotate(180deg);}
+.faq-a{font-size:13px;color:rgba(255,255,255,.58);line-height:1.9;padding:0 20px;max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.16,1,.3,1),padding .3s,opacity .3s;opacity:0;}
+.faq-a.open{max-height:300px;padding:0 20px 18px;opacity:1;}
+
+.bgm-wrap{padding:40px 24px;max-width:700px;margin:0 auto;}
+.bgm-card{padding:24px 28px;}
+.bgm-sec-lbl{font-size:11px;letter-spacing:.25em;opacity:.38;margin-bottom:16px;text-transform:uppercase;}
+.bgm-main-lbl{font-size:14px;font-weight:700;margin-bottom:4px;}
+.bgm-sub-lbl{font-size:11px;opacity:.4;margin-bottom:16px;letter-spacing:.05em;}
+.bgm-tracks{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.bgm-track{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:all .25s;background:rgba(255,255,255,.03);}
+.bgm-track:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);}
+.bgm-track.active{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.22);}
+.bgm-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0;transition:all .25s;}
+.bgm-track.active .bgm-dot{background:white;}
+.bgm-track-name{font-size:13px;font-weight:600;}
+.bgm-track-sub{font-size:11px;opacity:.42;margin-top:2px;}
+.bgm-player-wrap{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);}
+.bgm-player-wrap iframe{display:block;width:100%;border:none;}
+
+.cta-card{max-width:560px;margin:0 auto;}
+.cta-inner{padding:clamp(34px,6vw,64px) clamp(20px,4vw,50px);text-align:center;}
+.cta-label-txt{font-size:11px;letter-spacing:.3em;opacity:.35;margin-bottom:20px;text-transform:uppercase;}
+.cta-ttl{font-size:clamp(24px,4vw,40px);font-weight:900;letter-spacing:-.03em;margin-bottom:12px;}
+.cta-desc{font-size:13px;opacity:.44;line-height:1.88;margin-bottom:36px;}
+footer{text-align:center;padding:28px;border-top:1px solid rgba(255,255,255,.05);}
+.footer-txt{font-size:11px;opacity:.16;letter-spacing:.1em;}
+#weather-canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:5;}
+@media(max-width:600px){nav{padding:12px 14px;}.nav-right{gap:5px;}.btn-glass{padding:7px 11px;font-size:11px;}.sw,.sww{padding:48px 14px;}}
+</style>
 </head>
 <body>
-    <div id="root"></div>
+<canvas id="weather-canvas"></canvas>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-        const { Star, Users, ShoppingBag, ChevronDown, MessageCircle, Award, Sparkles, ArrowRight, Cloud, Snowflake, Sun } = lucide;
+<!-- NAV -->
+<nav>
+  <div class="logo-wrap">
+    <span class="logo-a" id="logo-a">おいしいコミュニティ</span>
+    <span class="logo-b" id="logo-b">美味しいコミュニティ</span>
+  </div>
+  <div class="nav-right">
+    <button class="btn-glass" onclick="cycleWeather()">
+      <span id="weather-icon">☀️</span><span id="weather-label" data-ja="晴れ" data-en="Clear">晴れ</span>
+    </button>
+    <button class="btn-glass" onclick="toggleLang()" id="lang-btn">EN</button>
+    <button class="btn-white" onclick="window.open('https://discord.gg/dcus','_blank')" data-ja="参加する" data-en="Join">参加する</button>
+  </div>
+</nav>
 
-        const _lnk = "https://discord.gg/dcus";
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-label">
+    <div class="hero-line"></div>
+    <span class="hero-tag">Discord Community</span>
+    <div class="hero-line"></div>
+  </div>
+  <h1 class="hero-h1 shimmer" id="hero-h1">おいしい<br>コミュニティ</h1>
+  <p class="hero-sub" data-ja="信頼と実績が積み重なる、上質なDiscordコミュニティ" data-en="A premium Discord community built on trust and proven results." id="hero-sub">信頼と実績が積み重なる、上質なDiscordコミュニティ</p>
+  <div class="hero-btns">
+    <button class="btn-glass" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" data-ja="詳細を見る" data-en="Learn More" id="hero-btn-detail">詳細を見る</button>
+    <button class="btn-white" style="padding:14px 32px;font-size:13px;" onclick="window.open('https://discord.gg/dcus','_blank')" data-ja="参加する →" data-en="Join Now →" id="hero-btn-join">参加する →</button>
+  </div>
+  <div class="scroll-hint">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+</section>
 
-        const T = {
-            ja: {
-                nav_join:"参加する", hero_sub:"信頼と実績が積み重なる、上質なDiscordコミュニティ",
-                hero_detail:"詳細を見る", hero_join:"参加する →",
-                stats_deals:"取引実績", stats_members:"コミュニティメンバー", stats_satisfaction:"満足度", stats_rating:"平均評価",
-                shop_badge:"実績 40件以上", shop_title:"積み重ねた信頼が、\n品質を証明する。",
-                shop_desc:"「美味しいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。",
-                shop_p1:"丁寧かつ迅速な対応", shop_p2:"40件超えの確かな実績", shop_p3:"安心できる取引環境",
-                ratio_title:"チャンネル構成", ratio_shop:"ショップ", ratio_chat:"雑談",
-                voices_label:"— Voice —", voices_title:"サーバー民の声",
-                cta_label:"Join Us", cta_title:"今すぐ参加しよう",
-                cta_desc:"美味しいコミュニティで、信頼できる仲間と繋がろう。\n40件以上の実績があなたを待っています。",
-                cta_btn:"参加する", footer:"© 2025 美味しいコミュニティ — All Rights Reserved",
-                section_shop:"— Shop —", section_shop_title:"ショップ紹介", lang_label:"EN",
-                w_clear:"晴れ", w_rain:"雨", w_snow:"雪",
-            },
-            en: {
-                nav_join:"Join", hero_sub:"A premium Discord community built on trust and proven results.",
-                hero_detail:"Learn More", hero_join:"Join Now →",
-                stats_deals:"Deals Done", stats_members:"Members", stats_satisfaction:"Satisfaction", stats_rating:"Avg Rating",
-                shop_badge:"40+ Deals", shop_title:"Trust earned through\nevery transaction.",
-                shop_desc:"Oishii Community's shop boasts over 40 completed transactions. Each deal is handled with care and integrity, earning the trust of our growing member base.",
-                shop_p1:"Prompt and courteous support", shop_p2:"40+ verified transactions", shop_p3:"Safe and reliable trading",
-                ratio_title:"Channel Breakdown", ratio_shop:"Shop", ratio_chat:"Chat",
-                voices_label:"— Voice —", voices_title:"Community Voices",
-                cta_label:"Join Us", cta_title:"Join Us Today",
-                cta_desc:"Connect with trusted members in Oishii Community.\n40+ deals are waiting for you.",
-                cta_btn:"Join Now", footer:"© 2025 Oishii Community — All Rights Reserved",
-                section_shop:"— Shop —", section_shop_title:"Shop", lang_label:"日本語",
-                w_clear:"Clear", w_rain:"Rain", w_snow:"Snow",
-            }
-        };
+<!-- STATS -->
+<section class="sw reveal" id="sec-stats">
+  <div class="stats-grid">
+    <div class="card"><div class="stat-inner">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.32;margin:0 auto 12px;display:block;"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+      <div class="stat-num" id="count-deals">0+</div>
+      <div class="stat-lbl" data-ja="取引実績" data-en="Deals Done" id="lbl-deals">取引実績</div>
+    </div></div>
+    <div class="card"><div class="stat-inner">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.32;margin:0 auto 12px;display:block;"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <div class="stat-num" id="count-members">0+</div>
+      <div class="stat-lbl" data-ja="コミュニティメンバー" data-en="Members" id="lbl-members">コミュニティメンバー</div>
+    </div></div>
+    <div class="card"><div class="stat-inner">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.32;margin:0 auto 12px;display:block;"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <div class="stat-num" id="count-sat">0%</div>
+      <div class="stat-lbl" data-ja="満足度" data-en="Satisfaction" id="lbl-sat">満足度</div>
+    </div></div>
+    <div class="card"><div class="stat-inner">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1" style="opacity:.32;margin:0 auto 12px;display:block;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <div class="stat-num" id="count-rating">0.0</div>
+      <div class="stat-lbl" data-ja="平均評価" data-en="Avg Rating" id="lbl-rating">平均評価</div>
+    </div></div>
+  </div>
+</section>
 
-        const voices = [
-            { name:"ゆずぴー", role:{ja:"常連メンバー",en:"Regular"}, text:{ja:"実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。",en:"40+ deals really sets them apart. The careful service totally won me over."}, stars:5, av:"Y" },
-            { name:"いくすわ", role:{ja:"新規参加者",en:"New Member"}, text:{ja:"サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！",en:"Great vibe — easy to ask anything. So glad I joined!"}, stars:5, av:"I" },
-            { name:"だくにる", role:{ja:"リピーター",en:"Repeat Buyer"}, text:{ja:"他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。",en:"Far more trustworthy than other servers. Quality that keeps me coming back."}, stars:5, av:"D" },
-            { name:"ここたん", role:{ja:"ベテランメンバー",en:"Veteran"}, text:{ja:"40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。",en:"The 40+ track record speaks for itself. Community quality is on another level."}, stars:5, av:"K" },
-            { name:"しちみ", role:{ja:"アクティブ勢",en:"Active Member"}, text:{ja:"雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。",en:"Chat is lively every day! Shop support is top-notch — so grateful."}, stars:5, av:"S" },
-            { name:"ゆきみ", role:{ja:"常連メンバー",en:"Regular"}, text:{ja:"ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。",en:"Both shop and chat are superb. Once you're in, you never want to leave."}, stars:5, av:"Y" },
-        ];
+<!-- SHOP -->
+<section class="sw reveal" id="shop">
+  <div class="sec-head">
+    <div class="sec-label">— Shop —</div>
+    <div class="sec-title" data-ja="ショップ紹介" data-en="Shop" id="shop-title">ショップ紹介</div>
+  </div>
+  <div class="card"><div style="padding:clamp(26px,5vw,50px);">
+    <div class="shop-layout">
+      <div class="shop-left">
+        <div class="shop-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span data-ja="実績 40件以上" data-en="40+ Deals" id="shop-badge-txt">実績 40件以上</span>
+        </div>
+        <div class="shop-ttl" data-ja="積み重ねた信頼が、<br>品質を証明する。" data-en="Trust earned through<br>every transaction." id="shop-ttl">積み重ねた信頼が、<br>品質を証明する。</div>
+        <p class="shop-desc" data-ja="「おいしいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。" data-en="Oishii Community's shop boasts over 40 completed transactions. Each deal is handled with care and integrity, earning the trust of our growing member base." id="shop-desc">「おいしいコミュニティ」のショップは、40件を超える取引実績を誇ります。一つひとつの取引を誠実に積み重ね、メンバーからの信頼を得てきました。</p>
+        <div class="shop-pts">
+          <div class="shop-pt"><div class="pdw"><div class="pd"></div></div><span class="pt-txt" data-ja="丁寧かつ迅速な対応" data-en="Prompt and courteous support" id="pt1">丁寧かつ迅速な対応</span></div>
+          <div class="shop-pt"><div class="pdw"><div class="pd"></div></div><span class="pt-txt" data-ja="40件超えの確かな実績" data-en="40+ verified transactions" id="pt2">40件超えの確かな実績</span></div>
+          <div class="shop-pt"><div class="pdw"><div class="pd"></div></div><span class="pt-txt" data-ja="安心できる取引環境" data-en="Safe and reliable trading" id="pt3">安心できる取引環境</span></div>
+        </div>
+        <div class="ratio-box">
+          <div style="font-size:11px;letter-spacing:.18em;opacity:.36;margin-bottom:14px;text-transform:uppercase;" data-ja="チャンネル構成" data-en="Channel Breakdown" id="ratio-ttl">チャンネル構成</div>
+          <div class="ratio-row">
+            <div style="display:flex;align-items:center;gap:7px;"><div class="rdot" style="background:rgba(255,255,255,.9);"></div><span class="rtxt"><span data-ja="ショップ" data-en="Shop" id="ratio-shop">ショップ</span> 60%</span></div>
+            <div style="display:flex;align-items:center;gap:7px;"><div class="rdot" style="background:rgba(255,255,255,.32);"></div><span class="rtxt"><span data-ja="雑談" data-en="Chat" id="ratio-chat">雑談</span> 40%</span></div>
+          </div>
+          <div class="rbar-bg"><div class="rbar" id="ratio-bar"></div></div>
+        </div>
+      </div>
+      <div class="shop-right">
+        <div class="shop-circle">
+          <div class="shop-num">40+</div>
+          <div class="shop-sub-lbl">DEALS</div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
 
-        const stats = [
-            { icon:ShoppingBag, value:"40+", key:"stats_deals" },
-            { icon:Users, value:"100+", key:"stats_members" },
-            { icon:Award, value:"98%", key:"stats_satisfaction" },
-            { icon:Star, value:"5.0", key:"stats_rating" },
-        ];
+<!-- ADMIN -->
+<section class="sww reveal" id="sec-admin">
+  <div class="sec-head">
+    <div class="sec-label">— Team —</div>
+    <div class="sec-title" data-ja="管理者紹介" data-en="Meet the Team" id="admin-title">管理者紹介</div>
+  </div>
+  <div class="admin-grid">
+    <div class="card card-admin"><div class="admin-inner">
+      <div class="adm-av-wrap">
+        <div class="adm-av" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);">Y</div>
+        <div class="adm-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg></div>
+      </div>
+      <div class="adm-name">ゆずぴー</div>
+      <span class="adm-role-tag" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:white;" data-ja="👑 鯖主" data-en="👑 Server Owner" id="role-yuzupie">👑 鯖主</span>
+      <p class="adm-desc" data-ja="おいしいコミュニティの設立者。メンバーが安心して楽しめるサーバー作りを常に心がけています。何かあればお気軽にDMを！" data-en="Founder of Oishii Community. Always working to keep the server a safe and fun place for everyone. Feel free to DM anytime!" id="desc-yuzupie">おいしいコミュニティの設立者。メンバーが安心して楽しめるサーバー作りを常に心がけています。何かあればお気軽にDMを！</p>
+    </div></div>
+    <div class="card card-admin"><div class="admin-inner">
+      <div class="adm-av-wrap">
+        <div class="adm-av" style="background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.35);">J</div>
+        <div class="adm-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      </div>
+      <div class="adm-name">じつねこ</div>
+      <span class="adm-role-tag" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:white;" data-ja="🛡️ サブオーナー" data-en="🛡️ Sub-Owner" id="role-jitsuneko">🛡️ サブオーナー</span>
+      <p class="adm-desc" data-ja="サーバーの裏方として日々サポート中。ルール違反や困りごとは気軽に相談してください。みんなが居心地よく過ごせるよう頑張ります！" data-en="Supporting the server behind the scenes every day. Feel free to reach out about any issues or concerns. Here to keep things comfortable for everyone!" id="desc-jitsuneko">サーバーの裏方として日々サポート中。ルール違反や困りごとは気軽に相談してください。みんなが居心地よく過ごせるよう頑張ります！</p>
+    </div></div>
+    <div class="card card-admin"><div class="admin-inner">
+      <div class="adm-av-wrap">
+        <div class="adm-av" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.3);">I</div>
+        <div class="adm-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      </div>
+      <div class="adm-name">いくすわ</div>
+      <span class="adm-role-tag" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:white;" data-ja="⚙️ 管理者" data-en="⚙️ Admin" id="role-ikusuwa">⚙️ 管理者</span>
+      <p class="adm-desc" data-ja="主にショップ周りとメンバー対応を担当しています。取引についての疑問や不安はいつでも声をかけてください！" data-en="Handles shop operations and member support. Don't hesitate to ask about any trading questions!" id="desc-ikusuwa">主にショップ周りとメンバー対応を担当しています。取引についての疑問や不安はいつでも声をかけてください！</p>
+    </div></div>
+  </div>
+</section>
 
-        function WeatherCanvas({ mode }) {
-            const ref = useRef(null);
-            useEffect(() => {
-                const canvas = ref.current; if (!canvas || mode === "none") return;
-                const ctx = canvas.getContext("2d");
-                let af;
-                const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-                resize(); window.addEventListener("resize", resize);
-                const pts = [];
-                if (mode === "rain") {
-                    for (let i=0;i<130;i++) pts.push({ x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight, len:Math.random()*16+8, speed:Math.random()*7+10, op:Math.random()*0.3+0.1, w:Math.random()*0.7+0.3 });
-                } else {
-                    for (let i=0;i<90;i++) pts.push({ x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight, r:Math.random()*3+1, speed:Math.random()*1.1+0.4, drift:Math.random()*0.5-0.25, op:Math.random()*0.45+0.15, wob:Math.random()*Math.PI*2 });
-                }
-                const draw = () => {
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    if (mode==="rain") {
-                        pts.forEach(p => {
-                            ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-p.len*0.14,p.y+p.len);
-                            ctx.strokeStyle=`rgba(180,220,255,${p.op})`; ctx.lineWidth=p.w; ctx.stroke();
-                            p.y+=p.speed; p.x-=p.speed*0.07;
-                            if(p.y>canvas.height){p.y=-p.len;p.x=Math.random()*canvas.width;}
-                        });
-                    } else {
-                        pts.forEach(p => {
-                            p.wob+=0.018;
-                            ctx.beginPath(); ctx.arc(p.x+Math.sin(p.wob)*1.8,p.y,p.r,0,Math.PI*2);
-                            ctx.fillStyle=`rgba(255,255,255,${p.op})`; ctx.fill();
-                            p.y+=p.speed; p.x+=p.drift;
-                            if(p.y>canvas.height){p.y=-p.r;p.x=Math.random()*canvas.width;}
-                            if(p.x>canvas.width) p.x=0; if(p.x<0) p.x=canvas.width;
-                        });
-                    }
-                    af = requestAnimationFrame(draw);
-                };
-                af = requestAnimationFrame(draw);
-                return () => { cancelAnimationFrame(af); window.removeEventListener("resize",resize); };
-            }, [mode]);
-            if (mode==="none") return null;
-            return <canvas ref={ref} style={{position:"fixed",top:0,left:0,pointerEvents:"none",zIndex:5}} />;
-        }
+<!-- VOICES -->
+<section class="sww reveal" id="sec-voices">
+  <div class="sec-head">
+    <div class="sec-label">— Voice —</div>
+    <div class="sec-title" data-ja="サーバー民の声" data-en="Community Voices" id="voices-title">サーバー民の声</div>
+  </div>
+  <div class="voices-grid">
+    <div class="card card-admin"><div class="voice-inner">
+      <div class="voice-head">
+        <div style="position:relative;flex-shrink:0;">
+          <div class="vav vav-a">Y</div>
+          <div style="position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;animation:adminPulse 2.5s ease-in-out infinite;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        </div>
+        <div><div class="v-name">ゆずぴー</div><div class="v-role v-role-a" data-ja="管理者" data-en="Admin" id="vr-yuzupie">管理者</div></div>
+      </div>
+      <div class="v-stars">⭐⭐⭐⭐⭐</div>
+      <p class="v-txt" data-ja="実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。" data-en="40+ deals really sets them apart. The careful service totally won me over." id="vt-yuzupie">実績40件以上ってマジで安心感が違う。最初は半信半疑だったけど、丁寧な対応に感動しました。</p>
+    </div></div>
+    <div class="card card-admin"><div class="voice-inner">
+      <div class="voice-head">
+        <div style="position:relative;flex-shrink:0;">
+          <div class="vav vav-a">I</div>
+          <div style="position:absolute;top:-5px;right:-5px;width:15px;height:15px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;animation:adminPulse 2.5s ease-in-out infinite;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        </div>
+        <div><div class="v-name">いくすわ</div><div class="v-role v-role-a" data-ja="管理者" data-en="Admin" id="vr-ikusuwa">管理者</div></div>
+      </div>
+      <div class="v-stars">⭐⭐⭐⭐⭐</div>
+      <p class="v-txt" data-ja="サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！" data-en="Great vibe — easy to ask anything. So glad I joined!" id="vt-ikusuwa">サーバーの雰囲気が良くて、分からないことも気軽に聞けます。参加して本当によかった！</p>
+    </div></div>
+    <div class="card"><div class="voice-inner">
+      <div class="voice-head"><div class="vav vav-n">D</div><div><div class="v-name">だくにる</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-dakuniru">アクティブメンバー</div></div></div>
+      <div class="v-stars">⭐⭐⭐⭐⭐</div>
+      <p class="v-txt" data-ja="他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。" data-en="Far more trustworthy than other servers. Quality that keeps me coming back." id="vt-dakuniru">他のコミュニティと比べて、信頼性が圧倒的に高い。また利用したいと思えるクオリティです。</p>
+    </div></div>
+    <div class="card"><div class="voice-inner">
+      <div class="voice-head"><div class="vav vav-n">K</div><div><div class="v-name">ここたん</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-kokotan">アクティブメンバー</div></div></div>
+      <div class="v-stars">⭐⭐⭐⭐⭐</div>
+      <p class="v-txt" data-ja="40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。" data-en="The 40+ track record speaks for itself. Community quality is on another level." id="vt-kokotan">40件以上の実績が証明する通り、安定したサービスが魅力。コミュニティの質が他と違います。</p>
+    </div></div>
+    <div class="card"><div class="voice-inner">
+      <div class="voice-head"><div class="vav vav-n">S</div><div><div class="v-name">しちみ</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-shichimi">アクティブメンバー</div></div></div>
+      <div class="v-stars">⭐⭐⭐⭐⭐</div>
+      <p class="v-txt" data-ja="雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。" data-en="Chat is lively every day! Shop support is top-notch — so grateful." id="vt-shichimi">雑談チャンネルも活発で毎日楽しい！ショップの対応も神対応すぎて感謝しかないです。</p>
+    </div></div>
+    <div class="card"><div class="voice-inner">
+      <div class="voice-head"><div class="vav vav-n">Y</div><div><div class="v-name">ゆきみ</div><div class="v-role" data-ja="アクティブメンバー" data-en="Active Member" id="vr-yukimi">アクティブメンバー</div></div></div>
+      <div class="v-stars">⭐⭐⭐⭐⭐</div>
+      <p class="v-txt" data-ja="ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。" data-en="Both shop and chat are superb. Once you're in, you never want to leave." id="vt-yukimi">ショップも雑談も両方充実してて、一度来たら離れられない。居心地が最高のサーバーです。</p>
+    </div></div>
+  </div>
+</section>
 
-        function RippleCanvas() {
-            const ref = useRef(null);
-            const mouse = useRef({x:-9999,y:-9999});
-            const ripples = useRef([]);
-            const lastR = useRef(0);
-            useEffect(() => {
-                const canvas = ref.current; if (!canvas) return;
-                const ctx = canvas.getContext("2d"); let af;
-                const resize = () => { canvas.width=window.innerWidth; canvas.height=window.innerHeight; };
-                resize(); window.addEventListener("resize",resize);
-                const onMove = e => {
-                    mouse.current = {x:e.clientX,y:e.clientY};
-                    const now = Date.now();
-                    if(now-lastR.current>90) {
-                        lastR.current=now;
-                        ripples.current.push({x:e.clientX,y:e.clientY,r:0,maxR:Math.random()*55+35,op:0.32,born:now});
-                    }
-                };
-                window.addEventListener("mousemove",onMove);
-                const draw = () => {
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    const {x:mx,y:my}=mouse.current;
-                    const cols=Math.ceil(canvas.width/60)+2, rows=Math.ceil(canvas.height/60)+2;
-                    ctx.strokeStyle="rgba(255,255,255,0.022)"; ctx.lineWidth=1;
-                    for(let c=0;c<cols;c++){
-                        ctx.beginPath();
-                        for(let r=0;r<rows;r++){
-                            const bx=c*60,by=r*60,dx=bx-mx,dy=by-my,dist=Math.sqrt(dx*dx+dy*dy);
-                            const s=Math.max(0,1-dist/190);
-                            const ox=(dx/(dist+.001))*s*-16, oy=(dy/(dist+.001))*s*-16;
-                            r===0?ctx.moveTo(bx+ox,by+oy):ctx.lineTo(bx+ox,by+oy);
-                        } ctx.stroke();
-                    }
-                    for(let r=0;r<rows;r++){
-                        ctx.beginPath();
-                        for(let c=0;c<cols;c++){
-                            const bx=c*60,by=r*60,dx=bx-mx,dy=by-my,dist=Math.sqrt(dx*dx+dy*dy);
-                            const s=Math.max(0,1-dist/190);
-                            const ox=(dx/(dist+.001))*s*-16, oy=(dy/(dist+.001))*s*-16;
-                            c===0?ctx.moveTo(bx+ox,by+oy):ctx.lineTo(bx+ox,by+oy);
-                        } ctx.stroke();
-                    }
-                    const now=Date.now();
-                    ripples.current=ripples.current.filter(rp=>rp.op>0.005);
-                    ripples.current.forEach(rp=>{
-                        const age=(now-rp.born)/650;
-                        rp.r=rp.maxR*Math.min(age,1); rp.op=Math.max(0,0.32*(1-age*0.92));
-                        ctx.beginPath(); ctx.arc(rp.x,rp.y,rp.r,0,Math.PI*2);
-                        ctx.strokeStyle=`rgba(255,255,255,${rp.op})`; ctx.lineWidth=1; ctx.stroke();
-                        const g=ctx.createRadialGradient(rp.x,rp.y,0,rp.x,rp.y,rp.r);
-                        g.addColorStop(0,`rgba(255,255,255,${rp.op*0.07})`); g.addColorStop(1,"rgba(255,255,255,0)");
-                        ctx.beginPath(); ctx.arc(rp.x,rp.y,rp.r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-                    });
-                    af=requestAnimationFrame(draw);
-                };
-                af=requestAnimationFrame(draw);
-                return ()=>{ cancelAnimationFrame(af); window.removeEventListener("resize",resize); window.removeEventListener("mousemove",onMove); };
-            },[]);
-            return <canvas ref={ref} style={{position:"fixed",top:0,left:0,pointerEvents:"none",zIndex:3}} />;
-        }
+<!-- RULES -->
+<section class="sw reveal" id="sec-rules">
+  <div class="sec-head">
+    <div class="sec-label">— Rules —</div>
+    <div class="sec-title" data-ja="サーバー利用規約" data-en="Server Rules" id="rules-title">サーバー利用規約</div>
+  </div>
+  <div class="rules-grid">
+    <div class="card rule-inner"><div class="rule-num">01</div><div class="rule-ttl" data-ja="🤝 挨拶とマナー" data-en="🤝 Conduct &amp; Manners" id="r1-ttl">🤝 挨拶とマナー</div><div class="rule-items">
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="相手を尊重する：攻撃的な口調や煽りは禁止です。" data-en="Be respectful: aggressive or provocative language is prohibited." id="r1-1">相手を尊重する：攻撃的な口調や煽りは禁止です。</p></div>
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="不快な発言の禁止：差別・過度な下ネタ・特定個人への中傷は控えてください。" data-en="No offensive speech: avoid discrimination, excessive vulgarity, or defamation." id="r1-2">不快な発言の禁止：差別・過度な下ネタ・特定個人への中傷は控えてください。</p></div>
+    </div></div>
+    <div class="card rule-inner"><div class="rule-num">02</div><div class="rule-ttl" data-ja="📂 チャンネルの使い分け" data-en="📂 Channel Usage" id="r2-ttl">📂 チャンネルの使い分け</div><div class="rule-items">
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="各チャンネルの趣旨に沿った投稿をお願いします。" data-en="Please post in the appropriate channel for each topic." id="r2-1">各チャンネルの趣旨に沿った投稿をお願いします。</p></div>
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="意味のない連投・スタンプの大量送信は禁止です。" data-en="Meaningless spam and excessive sticker/emoji floods are prohibited." id="r2-2">意味のない連投・スタンプの大量送信は禁止です。</p></div>
+    </div></div>
+    <div class="card rule-inner"><div class="rule-num">03</div><div class="rule-ttl" data-ja="🔒 プライバシーと自衛" data-en="🔒 Privacy &amp; Safety" id="r3-ttl">🔒 プライバシーと自衛</div><div class="rule-items">
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="本名・住所・電話番号など個人特定に繋がる情報の投稿は禁止です。" data-en="Do not share real names, addresses, phone numbers, or any identifying information." id="r3-1">本名・住所・電話番号など個人特定に繋がる情報の投稿は禁止です。</p></div>
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="出会い目的のDM送信・勧誘は厳禁です。" data-en="Soliciting romantic connections via DM is strictly forbidden." id="r3-2">出会い目的のDM送信・勧誘は厳禁です。</p></div>
+    </div></div>
+    <div class="card rule-inner"><div class="rule-num">04</div><div class="rule-ttl" data-ja="🔔 メンションの扱い" data-en="🔔 Mentions" id="r4-ttl">🔔 メンションの扱い</div><div class="rule-items">
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="急用でもないのに管理者や特定メンバーへメンションを飛ばしすぎるのは避けましょう。" data-en="Avoid pinging admins or members unnecessarily for non-urgent matters." id="r4-1">急用でもないのに管理者や特定メンバーへメンションを飛ばしすぎるのは避けましょう。</p></div>
+    </div></div>
+    <div class="card rule-inner"><div class="rule-num">05</div><div class="rule-ttl" data-ja="🚫 禁止事項" data-en="🚫 Prohibited Actions" id="r5-ttl">🚫 禁止事項</div><div class="rule-items">
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="荒らし行為：サーバー運営を妨害するすべての行為。" data-en="Trolling: any action that disrupts or harms the server." id="r5-1">荒らし行為：サーバー運営を妨害するすべての行為。</p></div>
+      <div class="rule-item"><div class="rbullet"></div><p class="rule-txt" data-ja="宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。" data-en="Advertising: promoting other servers or SNS outside of the designated channel is prohibited." id="r5-2">宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。</p></div>
+    </div></div>
+  </div>
+  <div class="admin-note">
+    <div class="an-ttl" data-ja="📌 管理者からのお願い" data-en="📌 From the Admins" id="note-ttl">📌 管理者からのお願い</div>
+    <p class="an-txt" data-ja="ルールに違反している人を見かけたら、直接反論せずに「お問い合わせ」または「管理人へのDM」で報告してください。平和な環境作りにご協力をお願いします！" data-en="If you see someone breaking the rules, please don't engage directly — report it via the contact channel or by DMing an admin. Thank you for helping keep this a peaceful place!" id="note-txt">ルールに違反している人を見かけたら、直接反論せずに「お問い合わせ」または「管理人へのDM」で報告してください。平和な環境作りにご協力をお願いします！</p>
+  </div>
+</section>
 
-        function SakuraCursor() {
-            const [pos,setPos]=useState({x:-200,y:-200});
-            const [petals,setPetals]=useState([]);
-            const last=useRef(0);
-            useEffect(()=>{
-                const onMove=e=>{
-                    setPos({x:e.clientX,y:e.clientY});
-                    const now=Date.now();
-                    if(now-last.current>110){
-                        last.current=now;
-                        const id=now+Math.random();
-                        setPetals(p=>[...p.slice(-10),{id,x:e.clientX+(Math.random()-0.5)*16,y:e.clientY+(Math.random()-0.5)*16,size:Math.random()*9+5,rot:Math.random()*360,born:now}]);
-                    }
-                };
-                window.addEventListener("mousemove",onMove);
-                return ()=>window.removeEventListener("mousemove",onMove);
-            },[]);
-            useEffect(()=>{
-                const t=setInterval(()=>{ const now=Date.now(); setPetals(p=>p.filter(pt=>now-pt.born<900)); },120);
-                return ()=>clearInterval(t);
-            },[]);
-            const angles=[0,72,144,216,288];
-            return (
-                <div style={{position:"fixed",top:0,left:0,pointerEvents:"none",zIndex:9999}}>
-                    <svg width="30" height="30" style={{position:"absolute",left:pos.x-15,top:pos.y-15,filter:"drop-shadow(0 0 5px rgba(255,150,170,0.9))"}} viewBox="-15 -15 30 30">
-                        {angles.map((a,i)=><g key={i} transform={`rotate(${a})`}><ellipse cx="0" cy="-6.5" rx="3.5" ry="6.5" fill="rgba(255,192,203,0.92)"/></g>)}
-                        <circle cx="0" cy="0" r="2.8" fill="rgba(255,230,235,1)"/>
-                        <circle cx="0" cy="0" r="1.1" fill="rgba(255,90,120,0.85)"/>
-                    </svg>
-                    {petals.map(pt=>(
-                        <svg key={pt.id} width={pt.size*2.2} height={pt.size*2.2}
-                            style={{position:"absolute",left:pt.x-pt.size,top:pt.y-pt.size,animation:"petalFade 0.9s ease forwards"}}
-                            viewBox={`-${pt.size} -${pt.size} ${pt.size*2} ${pt.size*2}`}>
-                            {angles.map((a,i)=><g key={i} transform={`rotate(${a+pt.rot}) scale(${pt.size/8})`}><ellipse cx="0" cy="-6.5" rx="3.5" ry="6.5" fill="rgba(255,182,193,0.65)"/></g>)}
-                        </svg>
-                    ))}
-                </div>
-            );
-        }
+<!-- FAQ -->
+<section class="sw reveal" id="sec-faq">
+  <div class="sec-head">
+    <div class="sec-label">— FAQ —</div>
+    <div class="sec-title" data-ja="よくある質問" data-en="FAQ" id="faq-title">よくある質問</div>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span data-ja="浮上（アクティブ）しても大丈夫ですか？" data-en="Is it okay to be active and chat freely?" id="fq1">浮上（アクティブ）しても大丈夫ですか？</span>
+        <span class="faq-arr">▼</span>
+      </button>
+      <div class="faq-a" data-ja="もちろんです！どんどん話しかけてください。雑談チャンネルはいつでも大歓迎です。自分のペースで参加していただければ嬉しいです。" data-en="Absolutely! Jump right in and chat whenever you like. The chat channel is always open. Just go at your own pace." id="fa1">もちろんです！どんどん話しかけてください。雑談チャンネルはいつでも大歓迎です。自分のペースで参加していただければ嬉しいです。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span data-ja="みんな仲良さそうで話に入りづらいのですが…" data-en="Everyone seems close already — hard to break in?" id="fq2">みんな仲良さそうで話に入りづらいのですが…</span>
+        <span class="faq-arr">▼</span>
+      </button>
+      <div class="faq-a" data-ja="気にしなくて大丈夫です！常連メンバーは新しい人が来てくれると嬉しいと思っています。「はじめまして！」と一言投稿するだけで、自然に輪に入れますよ。管理者も積極的にサポートします。" data-en="Don't worry at all! The regulars love meeting new people. Just post a quick 'Hello!' and you'll naturally fit right in. The admins are here to help too." id="fa2">気にしなくて大丈夫です！常連メンバーは新しい人が来てくれると嬉しいと思っています。「はじめまして！」と一言投稿するだけで、自然に輪に入れますよ。管理者も積極的にサポートします。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span data-ja="ショップの利用は初めてでも大丈夫ですか？" data-en="Can I use the shop as a first-timer?" id="fq3">ショップの利用は初めてでも大丈夫ですか？</span>
+        <span class="faq-arr">▼</span>
+      </button>
+      <div class="faq-a" data-ja="もちろん大丈夫です！40件以上の実績があり、初心者の方も丁寧にサポートします。疑問があれば管理者（いくすわ）に気軽に聞いてください。" data-en="Of course! With 40+ completed deals, we guide first-timers every step of the way. Just ask いくすわ (ikusuwa) if you have any questions." id="fa3">もちろん大丈夫です！40件以上の実績があり、初心者の方も丁寧にサポートします。疑問があれば管理者（いくすわ）に気軽に聞いてください。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span data-ja="参加するのにお金はかかりますか？" data-en="Is there any cost to join?" id="fq4">参加するのにお金はかかりますか？</span>
+        <span class="faq-arr">▼</span>
+      </button>
+      <div class="faq-a" data-ja="サーバーへの参加は完全無料です。ショップのサービスを利用する際は別途ご案内があります。" data-en="Joining the server is completely free. Shop services are explained separately when you use them." id="fa4">サーバーへの参加は完全無料です。ショップのサービスを利用する際は別途ご案内があります。</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        <span data-ja="トラブルが起きたらどうすればいいですか？" data-en="What should I do if there's a problem?" id="fq5">トラブルが起きたらどうすればいいですか？</span>
+        <span class="faq-arr">▼</span>
+      </button>
+      <div class="faq-a" data-ja="直接相手に反論せず、管理者（ゆずぴー・じつねこ・いくすわ）のいずれかにDMで報告してください。迅速に対応します。" data-en="Don't confront the person directly — DM one of the admins (ゆずぴー, じつねこ, or いくすわ) and we'll handle it quickly." id="fa5">直接相手に反論せず、管理者（ゆずぴー・じつねこ・いくすわ）のいずれかにDMで報告してください。迅速に対応します。</div>
+    </div>
+  </div>
+</section>
 
-        function GlassCard({children,className="",style:s={}}) {
-            return (
-                <div className={`rounded-2xl border border-white/10 ${className}`}
-                    style={{background:"rgba(255,255,255,0.04)",backdropFilter:"blur(24px)",WebkitBackdropFilter:"blur(24px)",boxShadow:"0 8px 32px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.09)",...s}}>
-                    {children}
-                </div>
-            );
-        }
+<!-- BGM -->
+<div class="bgm-wrap reveal" id="sec-bgm">
+  <div class="card bgm-card">
+    <div class="bgm-sec-lbl">🎵 BGM</div>
+    <div class="bgm-main-lbl" data-ja="ゆずぴーがTikTokで使った曲欄" data-en="Songs used by ゆずぴー on TikTok" id="bgm-lbl">ゆずぴーがTikTokで使った曲欄</div>
+    <div class="bgm-sub-lbl" data-ja="好きな曲を選んでSpotifyで聴こう" data-en="Pick a track and listen on Spotify" id="bgm-sub">好きな曲を選んでSpotifyで聴こう</div>
+    <div class="bgm-tracks">
+      <div class="bgm-track active" onclick="selectTrack(0)">
+        <div class="bgm-dot"></div>
+        <div><div class="bgm-track-name">Track 1</div><div class="bgm-track-sub" data-ja="Spotifyで再生" data-en="Play on Spotify" id="bgm-sub1">Spotifyで再生</div></div>
+      </div>
+      <div class="bgm-track" onclick="selectTrack(1)">
+        <div class="bgm-dot"></div>
+        <div><div class="bgm-track-name">Track 2</div><div class="bgm-track-sub" data-ja="Spotifyで再生" data-en="Play on Spotify" id="bgm-sub2">Spotifyで再生</div></div>
+      </div>
+    </div>
+    <div class="bgm-player-wrap">
+      <iframe id="spotify-frame"
+        src="https://open.spotify.com/embed/track/4lSMRV1kOtIf9oWgww4EkA?utm_source=generator&theme=0"
+        width="100%" height="152" frameBorder="0" allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"></iframe>
+    </div>
+  </div>
+</div>
 
-        function StarRow({count=5}) {
-            return <div className="flex gap-0.5">{Array.from({length:count}).map((_,i)=><Star key={i} size={12} fill="white" color="white"/>)}</div>;
-        }
+<!-- CTA -->
+<section class="sw reveal" id="sec-cta" style="padding-bottom:110px;">
+  <div class="card cta-card"><div class="cta-inner">
+    <div class="cta-label-txt">Join Us</div>
+    <div class="cta-ttl" data-ja="今すぐ参加しよう" data-en="Join Us Today" id="cta-ttl">今すぐ参加しよう</div>
+    <p class="cta-desc" data-ja="おいしいコミュニティで、信頼できる仲間と繋がろう。<br>40件以上の実績があなたを待っています。" data-en="Connect with trusted members in Oishii Community.<br>40+ deals are waiting for you." id="cta-desc">おいしいコミュニティで、信頼できる仲間と繋がろう。<br>40件以上の実績があなたを待っています。</p>
+    <button class="btn-white" style="padding:17px 46px;font-size:14px;font-weight:900;" onclick="window.open('https://discord.gg/dcus','_blank')" data-ja="参加する →" data-en="Join Now →" id="cta-btn">参加する →</button>
+  </div></div>
+</section>
 
-        function App() {
-            const [lang, setLang] = useState("ja");
-            const [weather, setWeather] = useState("none");
-            const [visible, setVisible] = useState({});
-            const sectionRefs = useRef({});
-            const t = T[lang];
+<footer>
+  <p class="footer-txt" data-ja="© 2025 おいしいコミュニティ — All Rights Reserved" data-en="© 2025 Oishii Community — All Rights Reserved" id="footer-txt">© 2025 おいしいコミュニティ — All Rights Reserved</p>
+</footer>
 
-            useEffect(() => {
-                const obs = new IntersectionObserver(entries => entries.forEach(e => {
-                    if(e.isIntersecting) setVisible(v => ({...v, [e.target.dataset.id]: true}));
-                }), {threshold: 0.12});
-                Object.values(sectionRefs.current).forEach(el => el && obs.observe(el));
-                return () => obs.disconnect();
-            }, []);
+<script>
+// ── Language switcher ─────────────────────────────────────────────
+let currentLang = 'ja';
 
-            const setRef = id => el => { sectionRefs.current[id] = el; if(el) el.dataset.id = id; };
-            const weatherCycle = () => setWeather(w => w === "none" ? "rain" : w === "rain" ? "snow" : "none");
-            
-            const wIcon = weather === "rain" ? <Cloud size={13}/> : weather === "snow" ? <Snowflake size={13}/> : <Sun size={13}/>;
-            const wLabel = weather === "none" ? t.w_clear : weather === "rain" ? t.w_rain : t.w_snow;
+function toggleLang() {
+  currentLang = currentLang === 'ja' ? 'en' : 'ja';
+  document.getElementById('lang-btn').textContent = currentLang === 'ja' ? 'EN' : '日本語';
+  document.documentElement.lang = currentLang;
 
-            return (
-                <div style={{minHeight:"100vh", position:"relative"}}>
-                    {/* Fixed BG layers */}
-                    <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:1,backgroundImage:"linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px)",backgroundSize:"60px 60px"}}/>
-                    <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:2,background:"radial-gradient(ellipse 80% 55% at 50% 0%,rgba(255,255,255,.03) 0%,transparent 70%)"}}/>
+  // Update all elements with data-ja / data-en
+  document.querySelectorAll('[data-ja][data-en]').forEach(el => {
+    const val = el.getAttribute('data-' + currentLang);
+    if (val !== null) el.innerHTML = val;
+  });
 
-                    <RippleCanvas/>
-                    <WeatherCanvas mode={weather}/>
-                    <SakuraCursor/>
+  // Hero h1 special (keep line break)
+  const h1 = document.getElementById('hero-h1');
+  h1.innerHTML = currentLang === 'ja'
+    ? 'おいしい<br>コミュニティ'
+    : 'Oishii<br>Community';
 
-                    {/* NAV */}
-                    <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"18px 28px",display:"flex",alignItems:"center",justifyContent:"space-between",backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",borderBottom:"1px solid rgba(255,255,255,.055)"}}>
-                        <span style={{fontSize:"13px",fontWeight:900,letterSpacing:".14em"}}>美味しいCOM</span>
-                        <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
-                            <button className="gb" onClick={weatherCycle} style={{display:"flex",alignItems:"center",gap:"6px",padding:"8px 14px",borderRadius:"100px",fontSize:"11px",letterSpacing:".08em",color:"white"}}>
-                                {wIcon}{wLabel}
-                            </button>
-                            <button className="gb" onClick={()=>setLang(l=>l==="ja"?"en":"ja")} style={{padding:"8px 16px",borderRadius:"100px",fontSize:"11px",letterSpacing:".1em",color:"white"}}>
-                                {t.lang_label}
-                            </button>
-                            <button className="cb" onClick={()=>window.open(_lnk,"_blank")} style={{padding:"9px 22px",borderRadius:"100px",fontSize:"12px",letterSpacing:".1em",fontWeight:700,border:"none"}}>
-                                {t.nav_join}
-                            </button>
-                        </div>
-                    </nav>
+  // Logo flip text
+  document.getElementById('logo-a').textContent = currentLang === 'ja' ? 'おいしいコミュニティ' : 'Oishii Community';
+  document.getElementById('logo-b').textContent = currentLang === 'ja' ? '美味しいコミュニティ' : 'Oishii Community ✦';
 
-                    {/* HERO */}
-                    <section style={{position:"relative",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",minHeight:"100vh",padding:"0 24px"}}>
-                        <div style={{animation:"fadeIn 1s ease forwards",opacity:0,animationDelay:".15s",marginBottom:"22px"}}>
-                            <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"12px"}}>
-                                <div style={{width:"36px",height:"1px",background:"rgba(255,255,255,.22)"}}/>
-                                <span style={{fontSize:"11px",letterSpacing:".3em",opacity:.38,textTransform:"uppercase"}}>Discord Community</span>
-                                <div style={{width:"36px",height:"1px",background:"rgba(255,255,255,.22)"}}/>
-                            </div>
-                        </div>
-                        <h1 className="shimmer-text" style={{fontSize:"clamp(50px,11vw,110px)",fontWeight:900,letterSpacing:"-.035em",lineHeight:1.04,marginBottom:"18px",animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".3s"}}>
-                            {lang==="ja"?<>美味しい<br/>コミュニティ</>:<>Oishii<br/>Community</>}
-                        </h1>
-                        <p style={{fontSize:"clamp(13px,1.8vw,16px)",opacity:.42,letterSpacing:".07em",marginBottom:"46px",lineHeight:1.88,animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".5s"}}>
-                            {t.hero_sub}
-                        </p>
-                        <div style={{display:"flex",gap:"12px",flexWrap:"wrap",justifyContent:"center",animation:"fadeUp 1s cubic-bezier(.16,1,.3,1) forwards",opacity:0,animationDelay:".7s"}}>
-                            <button className="gb" onClick={()=>document.getElementById("shop").scrollIntoView({behavior:"smooth"})} style={{padding:"14px 28px",borderRadius:"100px",fontSize:"13px",letterSpacing:".1em",color:"white"}}>
-                                {t.hero_detail}
-                            </button>
-                            <button className="cb" onClick={()=>window.open(_lnk,"_blank")} style={{padding:"14px 32px",borderRadius:"100px",fontSize:"13px",letterSpacing:".1em",fontWeight:700,border:"none"}}>
-                                {t.hero_join}
-                            </button>
-                        </div>
-                        <div style={{position:"absolute",bottom:"34px",animation:"fadeIn 2s ease forwards",opacity:0,animationDelay:"1.3s"}}>
-                            <ChevronDown size={18} style={{opacity:.22,animation:"float 2.3s ease-in-out infinite"}}/>
-                        </div>
-                    </section>
+  // Weather label (keep current weather state)
+  updateWeatherLabel();
+}
 
-                    {/* STATS */}
-                    <section ref={setRef("stats")} className={`reveal ${visible.stats?"revealed":""}`} style={{padding:"64px 24px",maxWidth:"880px",margin:"0 auto"}}>
-                        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(175px,1fr))",gap:"14px"}}>
-                            {stats.map(({icon:Icon,value,key},i)=>(
-                                <GlassCard key={i} className="ch">
-                                    <div style={{padding:"30px 18px",textAlign:"center"}}>
-                                        <Icon size={17} style={{opacity:.32,margin:"0 auto 12px"}}/>
-                                        <div style={{fontSize:"clamp(32px,5vw,44px)",fontWeight:900,letterSpacing:"-.03em",marginBottom:"5px"}}>{value}</div>
-                                        <div style={{fontSize:"11px",opacity:.35,letterSpacing:".12em"}}>{t[key]}</div>
-                                    </div>
-                                </GlassCard>
-                            ))}
-                        </div>
-                    </section>
+// ── Intersection Observer ─────────────────────────────────────────
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-                    {/* SHOP */}
-                    <section id="shop" ref={setRef("shop")} className={`reveal ${visible.shop?"revealed":""}`} style={{padding:"64px 24px",maxWidth:"880px",margin:"0 auto"}}>
-                        <div style={{textAlign:"center",marginBottom:"50px"}}>
-                            <div style={{fontSize:"11px",letterSpacing:".3em",opacity:.35,marginBottom:"12px",textTransform:"uppercase"}}>{t.section_shop}</div>
-                            <h2 style={{fontSize:"clamp(28px,5vw,48px)",fontWeight:900,letterSpacing:"-.03em"}}>{t.section_shop_title}</h2>
-                        </div>
-                        <GlassCard>
-                            <div style={{padding:"clamp(26px,5vw,50px)"}}>
-                                <div style={{display:"flex",gap:"28px",flexWrap:"wrap",alignItems:"flex-start"}}>
-                                    <div style={{flex:"1",minWidth:"230px"}}>
-                                        <div style={{display:"inline-flex",alignItems:"center",gap:"7px",background:"rgba(255,255,255,.08)",border:"1px solid rgba(255,255,255,.14)",padding:"7px 16px",borderRadius:"100px",fontSize:"12px",letterSpacing:".1em",marginBottom:"20px"}}>
-                                            <Sparkles size={12}/>{t.shop_badge}
-                                        </div>
-                                        <h3 style={{fontSize:"clamp(19px,3vw,29px)",fontWeight:900,letterSpacing:"-.02em",marginBottom:"12px",lineHeight:1.38,whiteSpace:"pre-line"}}>{t.shop_title}</h3>
-                                        <p style={{fontSize:"13px",opacity:.46,lineHeight:1.92,marginBottom:"22px"}}>{t.shop_desc}</p>
-                                        <div style={{display:"flex",flexDirection:"column",gap:"9px",marginBottom:"28px"}}>
-                                            {[t.shop_p1,t.shop_p2,t.shop_p3].map((pt,i)=>(
-                                                <div key={i} style={{display:"flex",alignItems:"center",gap:"10px"}}>
-                                                    <div style={{width:"18px",height:"18px",borderRadius:"50%",background:"rgba(255,255,255,.07)",border:"1px solid rgba(255,255,255,.16)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                                                        <div style={{width:"5px",height:"5px",borderRadius:"50%",background:"white"}}/>
-                                                    </div>
-                                                    <span style={{fontSize:"13px",opacity:.65}}>{pt}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.09)",borderRadius:"16px",padding:"20px 22px"}}>
-                                            <div style={{fontSize:"11px",letterSpacing:".18em",opacity:.36,marginBottom:"14px",textTransform:"uppercase"}}>{t.ratio_title}</div>
-                                            <div style={{display:"flex",gap:"16px",marginBottom:"10px",flexWrap:"wrap"}}>
-                                                {[[t.ratio_shop,"55%","rgba(255,255,255,0.9)"],[t.ratio_chat,"45%","rgba(255,255,255,0.32)"]].map(([label,pct,col],i)=>(
-                                                    <div key={i} style={{display:"flex",alignItems:"center",gap:"7px"}}>
-                                                        <div style={{width:"9px",height:"9px",borderRadius:"50%",background:col}}/>
-                                                        <span style={{fontSize:"12px",opacity:.72}}>{label} {pct}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <div style={{height:"7px",borderRadius:"100px",background:"rgba(255,255,255,.09)",overflow:"hidden"}}>
-                                                {visible.shop && <div className="bar-anim" style={{height:"100%",background:"linear-gradient(90deg,rgba(255,255,255,.92),rgba(255,255,255,.48))",borderRadius:"100px"}} />}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",width:"100%",maxWidth:"145px"}}>
-                                        <div style={{width:"clamp(105px,17vw,145px)",height:"clamp(105px,17vw,145px)",borderRadius:"50%",background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.09)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",boxShadow:"0 0 55px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.09)"}}>
-                                            <div style={{fontSize:"clamp(30px,5vw,46px)",fontWeight:900}}>40+</div>
-                                            <div style={{fontSize:"10px",opacity:.34,letterSpacing:".12em"}}>DEALS</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </GlassCard>
-                    </section>
+// ── Ratio bar ─────────────────────────────────────────────────────
+const shopObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const bar = document.getElementById('ratio-bar');
+      bar.style.transition = 'width 1.3s cubic-bezier(.16,1,.3,1) .3s';
+      bar.style.width = '60%';
+    }
+  });
+}, { threshold: 0.2 });
+shopObs.observe(document.getElementById('shop'));
 
-                    {/* VOICES */}
-                    <section ref={setRef("voices")} className={`reveal ${visible.voices?"revealed":""}`} style={{padding:"64px 24px",maxWidth:"1100px",margin:"0 auto"}}>
-                        <div style={{textAlign:"center",marginBottom:"50px"}}>
-                            <div style={{fontSize:"11px",letterSpacing:".3em",opacity:.35,marginBottom:"12px",textTransform:"uppercase"}}>{t.voices_label}</div>
-                            <h2 style={{fontSize:"clamp(28px,5vw,48px)",fontWeight:900,letterSpacing:"-.03em"}}>{t.voices_title}</h2>
-                        </div>
-                        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:"12px"}}>
-                            {voices.map(({name,role,text,stars,av},i)=>(
-                                <GlassCard key={i} className="ch">
-                                    <div style={{padding:"22px"}}>
-                                        <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
-                                            <div style={{width:"36px",height:"36px",borderRadius:"50%",background:"rgba(255,255,255,.07)",border:"1px solid rgba(255,255,255,.13)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",fontWeight:700,flexShrink:0}}>{av}</div>
-                                            <div>
-                                                <div style={{fontSize:"13px",fontWeight:700}}>{name}</div>
-                                                <div style={{fontSize:"10px",opacity:.35}}>{role[lang]}</div>
-                                            </div>
-                                        </div>
-                                        <StarRow count={stars}/>
-                                        <p style={{fontSize:"12px",opacity:.54,lineHeight:1.88,marginTop:"10px"}}>{text[lang]}</p>
-                                        <MessageCircle size={12} style={{opacity:.1,marginTop:"12px"}}/>
-                                    </div>
-                                </GlassCard>
-                            ))}
-                        </div>
-                    </section>
+// ── Count-up animation ────────────────────────────────────────────
+let countsDone = false;
+function animateCount(id, target, suffix, duration) {
+  const el = document.getElementById(id);
+  let start = 0;
+  const step = Math.ceil(target / (duration / 16));
+  const timer = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = start + suffix;
+    if (start >= target) clearInterval(timer);
+  }, 16);
+}
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !countsDone) {
+      countsDone = true;
+      animateCount('count-deals', 40, '+', 1200);
+      animateCount('count-members', 100, '+', 1400);
+      animateCount('count-sat', 98, '%', 1300);
+      let r = 0;
+      const rt = setInterval(() => {
+        r = Math.min(+(r + 0.1).toFixed(1), 5.0);
+        document.getElementById('count-rating').textContent = r.toFixed(1);
+        if (r >= 5.0) clearInterval(rt);
+      }, 25);
+    }
+  });
+}, { threshold: 0.3 });
+statsObs.observe(document.getElementById('sec-stats'));
 
-                    {/* CTA */}
-                    <section ref={setRef("cta")} className={`reveal ${visible.cta?"revealed":""}`} style={{padding:"64px 24px 110px",textAlign:"center"}}>
-                        <GlassCard style={{maxWidth:"560px",margin:"0 auto"}}>
-                            <div style={{padding:"clamp(34px,6vw,64px) clamp(20px,4vw,50px)"}}>
-                                <div style={{fontSize:"11px",letterSpacing:".3em",opacity:.35,marginBottom:"20px",textTransform:"uppercase"}}>{t.cta_label}</div>
-                                <h2 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:900,letterSpacing:"-.03em",marginBottom:"12px"}}>{t.cta_title}</h2>
-                                <p style={{fontSize:"13px",opacity:.44,lineHeight:1.88,marginBottom:"36px",whiteSpace:"pre-line"}}>{t.cta_desc}</p>
-                                <button className="cb" onClick={()=>window.open(_lnk,"_blank")} style={{padding:"17px 46px",borderRadius:"100px",fontSize:"14px",letterSpacing:".1em",fontWeight:900,border:"none",display:"inline-flex",alignItems:"center",gap:"9px"}}>
-                                    {t.cta_btn}<ArrowRight size={14}/>
-                                </button>
-                            </div>
-                        </GlassCard>
-                    </section>
+// ── FAQ ───────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const arrow = btn.querySelector('.faq-arr');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-arr').forEach(a => a.classList.remove('open'));
+  if (!isOpen) { answer.classList.add('open'); arrow.classList.add('open'); }
+}
 
-                    <footer style={{textAlign:"center",padding:"28px",borderTop:"1px solid rgba(255,255,255,.05)"}}>
-                        <p style={{fontSize:"11px",opacity:.16,letterSpacing:".1em"}}>{t.footer}</p>
-                    </footer>
-                </div>
-            );
-        }
+// ── BGM ───────────────────────────────────────────────────────────
+const trackIds = ['4lSMRV1kOtIf9oWgww4EkA', '4v18zk0GbRBOvYM3TXmiaL'];
+function selectTrack(idx) {
+  document.querySelectorAll('.bgm-track').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.getElementById('spotify-frame').src =
+    'https://open.spotify.com/embed/track/' + trackIds[idx] + '?utm_source=generator&theme=0';
+}
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+// ── Weather ───────────────────────────────────────────────────────
+let weatherMode = 'none';
+const weatherStates = ['none', 'rain', 'snow'];
+const weatherData = {
+  none: { icon: '☀️', ja: '晴れ', en: 'Clear' },
+  rain: { icon: '🌧️', ja: '雨',   en: 'Rain'  },
+  snow: { icon: '❄️', ja: '雪',   en: 'Snow'  },
+};
+
+function updateWeatherLabel() {
+  const d = weatherData[weatherMode];
+  document.getElementById('weather-icon').textContent = d.icon;
+  document.getElementById('weather-label').textContent = d[currentLang];
+}
+
+function cycleWeather() {
+  const idx = weatherStates.indexOf(weatherMode);
+  weatherMode = weatherStates[(idx + 1) % weatherStates.length];
+  updateWeatherLabel();
+  initWeather();
+}
+
+const wCanvas = document.getElementById('weather-canvas');
+const wCtx = wCanvas.getContext('2d');
+let wAF = null, wPts = [];
+
+function resizeWCanvas() { wCanvas.width = window.innerWidth; wCanvas.height = window.innerHeight; }
+resizeWCanvas();
+window.addEventListener('resize', resizeWCanvas);
+
+function initWeather() {
+  cancelAnimationFrame(wAF);
+  wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+  wPts = [];
+  if (weatherMode === 'none') return;
+  if (weatherMode === 'rain') {
+    for (let i = 0; i < 130; i++) wPts.push({
+      x: Math.random() * wCanvas.width, y: Math.random() * wCanvas.height,
+      len: Math.random() * 16 + 8, speed: Math.random() * 7 + 10,
+      op: Math.random() * 0.3 + 0.1, w: Math.random() * 0.7 + 0.3
+    });
+  } else {
+    for (let i = 0; i < 90; i++) wPts.push({
+      x: Math.random() * wCanvas.width, y: Math.random() * wCanvas.height,
+      r: Math.random() * 3 + 1, speed: Math.random() * 1.1 + 0.4,
+      drift: Math.random() * 0.5 - 0.25, op: Math.random() * 0.45 + 0.15,
+      wob: Math.random() * Math.PI * 2
+    });
+  }
+  drawWeather();
+}
+
+function drawWeather() {
+  wCtx.clearRect(0, 0, wCanvas.width, wCanvas.height);
+  if (weatherMode === 'rain') {
+    wPts.forEach(p => {
+      wCtx.beginPath(); wCtx.moveTo(p.x, p.y); wCtx.lineTo(p.x - p.len * 0.14, p.y + p.len);
+      wCtx.strokeStyle = 'rgba(180,220,255,' + p.op + ')'; wCtx.lineWidth = p.w; wCtx.stroke();
+      p.y += p.speed; p.x -= p.speed * 0.07;
+      if (p.y > wCanvas.height) { p.y = -p.len; p.x = Math.random() * wCanvas.width; }
+    });
+  } else if (weatherMode === 'snow') {
+    wPts.forEach(p => {
+      p.wob += 0.018;
+      wCtx.beginPath(); wCtx.arc(p.x + Math.sin(p.wob) * 1.8, p.y, p.r, 0, Math.PI * 2);
+      wCtx.fillStyle = 'rgba(255,255,255,' + p.op + ')'; wCtx.fill();
+      p.y += p.speed; p.x += p.drift;
+      if (p.y > wCanvas.height) { p.y = -p.r; p.x = Math.random() * wCanvas.width; }
+      if (p.x > wCanvas.width) p.x = 0; if (p.x < 0) p.x = wCanvas.width;
+    });
+  }
+  wAF = requestAnimationFrame(drawWeather);
+}
+</script>
 </body>
 </html>
