@@ -52,9 +52,9 @@ body.light .op-body strong{color:#111;}
 #cur.hover{transform:translate(-50%,-50%) scale(2);}
 #cur.on-embed{width:6px;height:6px;background:rgba(255,255,255,.5);transform:translate(-50%,-50%);}
 
-/* EMBED TRACKING */
-.bpw{transition:transform .15s ease,box-shadow .15s ease;transform-style:preserve-3d;}
-.bpw.tracking{box-shadow:0 12px 40px rgba(0,0,0,.5);}
+/* EMBED TRACKING — applies to .bpw and .tilt-card */
+.bpw,.tilt-card{transition:transform .15s ease,box-shadow .15s ease;transform-style:preserve-3d;}
+.bpw.tracking,.tilt-card.tracking{box-shadow:0 12px 40px rgba(0,0,0,.5);}
 
 /* WARNING NOTICE */
 #warning{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:24px;}
@@ -607,27 +607,24 @@ function toggleFaq(btn) {
 
 // ── Embed tilt toward cursor ─────────────────────────────
 (function() {
-  const embed = document.querySelector('.bpw');
-  if (!embed) return;
-
-  embed.addEventListener('mouseenter', function() {
-    embed.classList.add('tracking');
-  });
-
-  embed.addEventListener('mousemove', function(e) {
-    const rect = embed.getBoundingClientRect();
-    // position relative to center of element (-0.5 to 0.5)
-    const rx = (e.clientX - rect.left) / rect.width - 0.5;
-    const ry = (e.clientY - rect.top) / rect.height - 0.5;
-    // tilt: max ±8deg
-    const tiltX = (-ry * 8).toFixed(2);
-    const tiltY = (rx * 8).toFixed(2);
-    embed.style.transform = 'perspective(600px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) scale(1.02)';
-  });
-
-  embed.addEventListener('mouseleave', function() {
-    embed.classList.remove('tracking');
-    embed.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)';
+  // Apply to Spotify embed wrappers + story cards + stat cards
+  const targets = document.querySelectorAll('.bpw, .sc, .cd');
+  targets.forEach(function(embed) {
+    embed.addEventListener('mouseenter', function() {
+      embed.classList.add('tracking');
+    });
+    embed.addEventListener('mousemove', function(e) {
+      const rect = embed.getBoundingClientRect();
+      const rx = (e.clientX - rect.left) / rect.width - 0.5;
+      const ry = (e.clientY - rect.top) / rect.height - 0.5;
+      const tiltX = (-ry * 6).toFixed(2);
+      const tiltY = (rx * 6).toFixed(2);
+      embed.style.transform = 'perspective(800px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) translateY(-4px)';
+    });
+    embed.addEventListener('mouseleave', function() {
+      embed.classList.remove('tracking');
+      embed.style.transform = '';
+    });
   });
 })();
 
