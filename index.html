@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>おいしいコミュニティ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.383.0/umd/lucide.min.js"></script>
 <style>
 :root{--g:rgba(255,255,255,.04);--gb:rgba(255,255,255,.10);--gh:rgba(255,255,255,.07);}
 *{margin:0;padding:0;box-sizing:border-box;cursor:none;}
@@ -79,8 +80,11 @@ body.light .op-body strong{color:#111;}
 .rv{opacity:0;transform:translateY(34px);}
 .rv.in{animation:fadeUp .85s cubic-bezier(.16,1,.3,1) forwards;}
 
-.cd{background:var(--g);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.09);transition:all .4s cubic-bezier(.16,1,.3,1);}
-.cd:hover{transform:translateY(-4px);background:var(--gh);border-color:rgba(255,255,255,.18);}
+.cd{background:var(--g);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.09);transition:all .35s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;}
+.cd::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .35s;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.11) 0%,transparent 65%);z-index:0;}
+.cd>*{position:relative;z-index:1;}
+.cd:hover{transform:translateY(-8px) scale(1.012);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);box-shadow:0 28px 56px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.12),inset 0 1px 0 rgba(255,255,255,.18);}
+.cd:hover::before{opacity:1;}
 .cd-a{background:rgba(255,255,255,.055)!important;border-color:rgba(255,255,255,.22)!important;}
 
 .bg{background:rgba(255,255,255,.07);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.17);color:#fff;border-radius:100px;padding:8px 18px;font-size:12px;letter-spacing:.07em;transition:all .3s ease;cursor:none;display:inline-flex;align-items:center;gap:6px;font-family:inherit;white-space:nowrap;}
@@ -214,6 +218,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
 .sc-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-size:12px;color:#fff;text-decoration:none;transition:all .25s;}
 .sc-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-2px);}
 
+/* POOPHUB */
+.ph-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:40px;}
+.ph-card{padding:26px;}
+.ph-tag{display:inline-flex;align-items:center;font-size:10px;letter-spacing:.1em;padding:3px 10px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);margin-bottom:14px;text-transform:uppercase;opacity:.7;}
+.ph-ttl{font-size:15px;font-weight:900;margin-bottom:10px;line-height:1.4;}
+.ph-desc{font-size:13px;opacity:.5;line-height:1.85;margin-bottom:18px;}
+.ph-creators{display:flex;gap:8px;flex-wrap:wrap;}
+.ph-chip{font-size:11px;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);opacity:.7;}
+.ph-credits{padding:30px;text-align:center;}
+.ph-credits-ttl{font-size:11px;letter-spacing:.2em;opacity:.4;text-transform:uppercase;margin-bottom:18px;}
+.ph-credits-grid{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
+.ph-credit-item{padding:10px 20px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);}
+.ph-credit-name{font-size:13px;font-weight:700;}
+
 /* CARD GLOW EFFECT */
 .cd{position:relative;overflow:hidden;}
 .cd::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.08) 0%,transparent 60%);}
@@ -233,7 +251,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
 <!-- WARNING NOTICE -->
 <div id="warning">
   <div class="warn-box">
-    <div class="warn-icon">⚠️</div>
+    <div class="warn-icon"><i data-lucide="alert-triangle" style="width:36px;height:36px;stroke:white"></i></div>
     <div class="warn-title">ご注意ください</div>
     <div class="warn-body">
       <p>このサイトのソースコードを無断で<strong>コピー・転用・自作発言する行為は禁止</strong>しています。</p>
@@ -274,6 +292,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
       <button class="tab" onclick="goPage('story',this)">おいしい物語</button>
       <button class="tab" onclick="goPage('history',this)">おいしいの歴史</button>
       <button class="tab" onclick="goPage('team',this)">管理者紹介</button>
+      <button class="tab" onclick="goPage('poophub',this)">PoopHub</button>
     </div>
     <button class="bg" onclick="cycleWeather()" id="weather-btn"><span id="wi">☀️</span><span id="wl">晴れ</span></button>
     <button class="bg" onclick="toggleLang()" id="lang-btn">EN</button>
@@ -305,19 +324,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
 <section class="sw rv" id="s-perks">
   <div class="sh"><div class="sl">— Benefits —</div><div class="st" data-j="参加したら何ができる？" data-e="What can you do here?" id="perks-title">参加したら何ができる？</div></div>
   <div class="pk-grid">
-    <div class="cd pk-card"><div class="perk-icon">💬</div><div class="pk-ttl" data-j="雑談チャンネルで毎日盛り上がる" data-e="Chat daily with active members" id="pk1t">雑談チャンネルで毎日盛り上がる</div><p class="pk-desc" data-j="活発な雑談チャンネルでメンバーと気軽に話せる。毎日誰かが浮上してる。" data-e="Chat freely about anything. Someone's always online!" id="pk1d">活発な雑談チャンネルでメンバーと気軽に話せる。毎日誰かが浮上してる。</p></div>
-    <div class="cd pk-card"><div class="perk-icon">🤝</div><div class="pk-ttl" data-j="信頼できる管理者に相談できる" data-e="Get support from trusted admins" id="pk2t">信頼できる管理者に相談できる</div><p class="pk-desc" data-j="ゆずぴー・じつねこ・いくすわの3名がサポート。困ったことがあれば気軽にDMを。" data-e="Three dedicated admins here to support you. DM anytime." id="pk2d">ゆずぴー・じつねこ・いくすわの3名がサポート。困ったことがあれば気軽にDMを。</p></div>
-    <div class="cd pk-card"><div class="perk-icon">🌍</div><div class="pk-ttl" data-j="3,000人超えのコミュニティに参加" data-e="Join a 3,000+ member community" id="pk3t">3,000人超えのコミュニティに参加</div><p class="pk-desc" data-j="歴史と実績のあるコミュニティ。2023年から続く絆と文化がここにある。" data-e="A community with real history since 2023." id="pk3d">歴史と実績のあるコミュニティ。2023年から続く絆と文化がここにある。</p></div>
+    <div class="cd pk-card"><div class="perk-icon"><i data-lucide="message-circle" style="width:22px;height:22px;stroke:white"></i></div><div class="pk-ttl" data-j="雑談チャンネルで毎日盛り上がる" data-e="Chat daily with active members" id="pk1t">雑談チャンネルで毎日盛り上がる</div><p class="pk-desc" data-j="活発な雑談チャンネルでメンバーと気軽に話せる。毎日誰かが浮上してる。" data-e="Chat freely about anything. Someone's always online!" id="pk1d">活発な雑談チャンネルでメンバーと気軽に話せる。毎日誰かが浮上してる。</p></div>
+    <div class="cd pk-card"><div class="perk-icon"><i data-lucide="shield-check" style="width:22px;height:22px;stroke:white"></i></div><div class="pk-ttl" data-j="信頼できる管理者に相談できる" data-e="Get support from trusted admins" id="pk2t">信頼できる管理者に相談できる</div><p class="pk-desc" data-j="ゆずぴー・じつねこ・いくすわの3名がサポート。困ったことがあれば気軽にDMを。" data-e="Three dedicated admins here to support you. DM anytime." id="pk2d">ゆずぴー・じつねこ・いくすわの3名がサポート。困ったことがあれば気軽にDMを。</p></div>
+    <div class="cd pk-card"><div class="perk-icon"><i data-lucide="globe" style="width:22px;height:22px;stroke:white"></i></div><div class="pk-ttl" data-j="3,000人超えのコミュニティに参加" data-e="Join a 13,000+ member community" id="pk3t">13,000人超えのコミュニティに参加</div><p class="pk-desc" data-j="歴史と実績のあるコミュニティ。2023年から続く絆と文化がここにある。" data-e="A community with real history since 2023." id="pk3d">歴史と実績のあるコミュニティ。2023年から続く絆と文化がここにある。</p></div>
   </div>
 </section>
 
 <!-- STATS -->
 <section class="sw rv" id="s-stats">
   <div class="sg">
-    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.3;margin:0 auto 11px;display:block"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><div class="sn" id="c-mem">0+</div><div class="slb" data-j="コミュニティメンバー" data-e="Members" id="l-mem">コミュニティメンバー</div></div></div>
-    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.3;margin:0 auto 11px;display:block"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div class="sn" id="c-hist">0+</div><div class="slb" data-j="歴史の年数" data-e="Years of History" id="l-hist">歴史の年数</div></div></div>
-    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="opacity:.3;margin:0 auto 11px;display:block"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><div class="sn" id="c-sat">0%</div><div class="slb" data-j="満足度" data-e="Satisfaction" id="l-sat">満足度</div></div></div>
-    <div class="cd"><div style="padding:28px 16px;text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="white" style="opacity:.3;margin:0 auto 11px;display:block"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><div class="sn" id="c-rat">0.0</div><div class="slb" data-j="平均評価" data-e="Avg Rating" id="l-rat">平均評価</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><i data-lucide="users" style="width:20px;height:20px;opacity:.4;margin:0 auto 14px;display:block;stroke:white"></i><div class="sn" id="c-mem">0+</div><div class="slb" data-j="コミュニティメンバー" data-e="Members" id="l-mem">コミュニティメンバー</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><i data-lucide="clock" style="width:20px;height:20px;opacity:.4;margin:0 auto 14px;display:block;stroke:white"></i><div class="sn" id="c-hist">0+</div><div class="slb" data-j="歴史の年数" data-e="Years of History" id="l-hist">歴史の年数</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><i data-lucide="thumbs-up" style="width:20px;height:20px;opacity:.4;margin:0 auto 14px;display:block;stroke:white"></i><div class="sn" id="c-sat">0%</div><div class="slb" data-j="満足度" data-e="Satisfaction" id="l-sat">満足度</div></div></div>
+    <div class="cd"><div style="padding:28px 16px;text-align:center"><i data-lucide="star" style="width:20px;height:20px;opacity:.4;margin:0 auto 14px;display:block;stroke:white;fill:white"></i><div class="sn" id="c-rat">0.0</div><div class="slb" data-j="平均評価" data-e="Avg Rating" id="l-rat">平均評価</div></div></div>
   </div>
 </section>
 
@@ -327,7 +346,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
   <div class="vg">
     <div class="cd cd-a"><div class="vi"><div class="vh"><div style="position:relative;flex-shrink:0"><div class="va va-a">Y</div><div style="position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:glowPulse 2.5s ease-in-out infinite"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div><div class="vn">ゆずぴー</div><div class="vr vra" data-j="鯖主" data-e="Server Owner" id="vr-y">鯖主</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="みんながいてくれるからこのサーバーは成り立ってる。これからもよろしく！" data-e="This server exists because of everyone here. Thanks!" id="vt-y">みんながいてくれるからこのサーバーは成り立ってる。これからもよろしく！</p></div></div>
     <div class="cd cd-a"><div class="vi"><div class="vh"><div style="position:relative;flex-shrink:0"><div class="va va-a">I</div><div style="position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:glowPulse 2.5s ease-in-out infinite"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div><div class="vn">いくすわ</div><div class="vr vra" data-j="管理者" data-e="Admin" id="vr-i">管理者</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="サーバーの雰囲気が良くて、分からないことも気軽に聞けます。" data-e="Great vibe — easy to ask anything anytime." id="vt-i">サーバーの雰囲気が良くて、分からないことも気軽に聞けます。</p></div></div>
-    <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">D</div><div><div class="vn">だくにる</div><div class="vr" data-j="アクティブメンバー" data-e="Active Member" id="vr-d">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="他のコミュニティと比べて、雰囲気が圧倒的にいい。また来たいと思えるサーバーです。" data-e="The vibe here is on another level. Always want to come back." id="vt-d">他のコミュニティと比べて、雰囲気が圧倒的にいい。また来たいと思えるサーバーです。</p></div></div>
+    <div class="cd cd-a"><div class="vi"><div class="vh"><div style="position:relative;flex-shrink:0"><div class="va va-a">J</div><div style="position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:glowPulse 2.5s ease-in-out infinite"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div><div class="vn">じつねこ</div><div class="vr vra" data-j="サブオーナー" data-e="Sub-Owner" id="vr-d">サブオーナー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="他のコミュニティと比べて、雰囲気が圧倒的にいい。また来たいと思えるサーバーです。" data-e="The vibe here is on another level. Always want to come back." id="vt-d">他のコミュニティと比べて、雰囲気が圧倒的にいい。また来たいと思えるサーバーです。</p></div></div>
     <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">K</div><div><div class="vn">ここたん</div><div class="vr" data-j="アクティブメンバー" data-e="Active Member" id="vr-k">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="歴史があるサーバーって独特の空気があっていい。長く続いてほしい。" data-e="A server with history has its own special vibe." id="vt-k">歴史があるサーバーって独特の空気があっていい。長く続いてほしい。</p></div></div>
     <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">S</div><div><div class="vn">しちみ</div><div class="vr" data-j="アクティブメンバー" data-e="Active Member" id="vr-s">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="雑談チャンネルも活発で毎日楽しい！居心地がよすぎて抜けられない。" data-e="Chat is lively every day! Too comfortable to ever leave." id="vt-s">雑談チャンネルも活発で毎日楽しい！居心地がよすぎて抜けられない。</p></div></div>
     <div class="cd"><div class="vi"><div class="vh"><div class="va va-n">N</div><div><div class="vn">のら</div><div class="vr" data-j="アクティブメンバー" data-e="Active Member" id="vr-n">アクティブメンバー</div></div></div><div style="font-size:12px;letter-spacing:1px;margin-bottom:8px">⭐⭐⭐⭐⭐</div><p class="vt" data-j="一度来たら離れられない。居心地が最高のサーバーです。" data-e="Once you're in, you never want to leave." id="vt-n">一度来たら離れられない。居心地が最高のサーバーです。</p></div></div>
@@ -338,12 +357,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
 <section class="sw rv">
   <div class="sh"><div class="sl">— Rules —</div><div class="st" data-j="サーバー利用規約" data-e="Server Rules" id="rules-title">サーバー利用規約</div></div>
   <div class="rg">
-    <div class="cd ri"><div class="rnum">01</div><div class="rtt" data-j="🤝 挨拶とマナー" data-e="🤝 Conduct" id="r1t">🤝 挨拶とマナー</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="相手を尊重する：攻撃的な口調や煽りは禁止です。" data-e="Be respectful: aggressive language is prohibited." id="r1a">相手を尊重する：攻撃的な口調や煽りは禁止です。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="差別・過度な下ネタ・特定個人への中傷は控えてください。" data-e="Avoid discrimination, vulgarity, or defamation." id="r1b">差別・過度な下ネタ・特定個人への中傷は控えてください。</p></div></div></div>
-    <div class="cd ri"><div class="rnum">02</div><div class="rtt" data-j="📂 チャンネルの使い分け" data-e="📂 Channel Usage" id="r2t">📂 チャンネルの使い分け</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="各チャンネルの趣旨に沿った投稿をお願いします。" data-e="Please post in the appropriate channel." id="r2a">各チャンネルの趣旨に沿った投稿をお願いします。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="意味のない連投・スタンプの大量送信は禁止です。" data-e="Spam and sticker floods are prohibited." id="r2b">意味のない連投・スタンプの大量送信は禁止です。</p></div></div></div>
-    <div class="cd ri"><div class="rnum">03</div><div class="rtt" data-j="🔒 プライバシーと自衛" data-e="🔒 Privacy" id="r3t">🔒 プライバシーと自衛</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="本名・住所など個人特定に繋がる情報の投稿は禁止です。" data-e="Do not share identifying personal information." id="r3a">本名・住所など個人特定に繋がる情報の投稿は禁止です。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="出会い目的のDM送信・勧誘は厳禁です。" data-e="Soliciting romantic connections via DM is forbidden." id="r3b">出会い目的のDM送信・勧誘は厳禁です。</p></div></div></div>
-    <div class="cd ri"><div class="rnum">04</div><div class="rtt" data-j="🚫 禁止事項" data-e="🚫 Prohibited" id="r4t">🚫 禁止事項</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="荒らし行為：サーバー運営を妨害するすべての行為。" data-e="Trolling: any action disrupting the server." id="r4a">荒らし行為：サーバー運営を妨害するすべての行為。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。" data-e="Advertising other servers outside the designated channel is prohibited." id="r4b">宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">01</div><div class="rtt" id="r1t" data-j="挨拶とマナー" data-e="Conduct"><i data-lucide="handshake" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;stroke:white;opacity:.7"></i>挨拶とマナー</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="相手を尊重する：攻撃的な口調や煽りは禁止です。" data-e="Be respectful: aggressive language is prohibited." id="r1a">相手を尊重する：攻撃的な口調や煽りは禁止です。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="差別・過度な下ネタ・特定個人への中傷は控えてください。" data-e="Avoid discrimination, vulgarity, or defamation." id="r1b">差別・過度な下ネタ・特定個人への中傷は控えてください。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">02</div><div class="rtt" id="r2t" data-j="チャンネルの使い分け" data-e="Channel Usage"><i data-lucide="layout-list" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;stroke:white;opacity:.7"></i>チャンネルの使い分け</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="各チャンネルの趣旨に沿った投稿をお願いします。" data-e="Please post in the appropriate channel." id="r2a">各チャンネルの趣旨に沿った投稿をお願いします。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="意味のない連投・スタンプの大量送信は禁止です。" data-e="Spam and sticker floods are prohibited." id="r2b">意味のない連投・スタンプの大量送信は禁止です。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">03</div><div class="rtt" id="r3t" data-j="プライバシーと自衛" data-e="Privacy"><i data-lucide="lock" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;stroke:white;opacity:.7"></i>プライバシーと自衛</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="本名・住所など個人特定に繋がる情報の投稿は禁止です。" data-e="Do not share identifying personal information." id="r3a">本名・住所など個人特定に繋がる情報の投稿は禁止です。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="出会い目的のDM送信・勧誘は厳禁です。" data-e="Soliciting romantic connections via DM is forbidden." id="r3b">出会い目的のDM送信・勧誘は厳禁です。</p></div></div></div>
+    <div class="cd ri"><div class="rnum">04</div><div class="rtt" id="r4t" data-j="禁止事項" data-e="Prohibited"><i data-lucide="ban" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;stroke:white;opacity:.7"></i>禁止事項</div><div class="rit"><div class="rii"><div class="rbu"></div><p class="rtc" data-j="荒らし行為：サーバー運営を妨害するすべての行為。" data-e="Trolling: any action disrupting the server." id="r4a">荒らし行為：サーバー運営を妨害するすべての行為。</p></div><div class="rii"><div class="rbu"></div><p class="rtc" data-j="宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。" data-e="Advertising other servers outside the designated channel is prohibited." id="r4b">宣伝：他サーバーやSNSの宣伝は専用チャンネル以外では禁止です。</p></div></div></div>
   </div>
-  <div class="anote"><div class="ant" data-j="📌 管理者からのお願い" data-e="📌 From the Admins" id="note-title">📌 管理者からのお願い</div><p class="anx" data-j="ルールに違反している人を見かけたら、直接反論せずに管理人へのDMで報告してください。平和な環境作りにご協力をお願いします！" data-e="If you see someone breaking the rules, don't engage directly — DM an admin. Thank you!" id="note-txt">ルールに違反している人を見かけたら、直接反論せずに管理人へのDMで報告してください。平和な環境作りにご協力をお願いします！</p></div>
+  <div class="anote"><div class="ant" data-j="管理者からのお願い" data-e="From the Admins" id="note-title"><i data-lucide="pin" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:5px;stroke:white;opacity:.6"></i>管理者からのお願い</div><p class="anx" data-j="ルールに違反している人を見かけたら、直接反論せずに管理人へのDMで報告してください。平和な環境作りにご協力をお願いします！" data-e="If you see someone breaking the rules, don't engage directly — DM an admin. Thank you!" id="note-txt">ルールに違反している人を見かけたら、直接反論せずに管理人へのDMで報告してください。平和な環境作りにご協力をお願いします！</p></div>
 </section>
 
 <!-- FAQ -->
@@ -360,7 +379,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
 <!-- BGM -->
 <div class="bmw rv">
   <div class="cd bmc">
-    <div style="font-size:11px;letter-spacing:.25em;opacity:.38;margin-bottom:14px;text-transform:uppercase">🎵 BGM</div>
+    <div style="font-size:11px;letter-spacing:.25em;opacity:.38;margin-bottom:14px;text-transform:uppercase;display:flex;align-items:center;gap:6px"><i data-lucide="music" style="width:14px;height:14px;stroke:white"></i>BGM</div>
     <div style="font-size:14px;font-weight:700;margin-bottom:4px" data-j="ゆずぴーがTikTokで使った曲欄" data-e="Songs used by ゆずぴー on TikTok" id="bgm-label">ゆずぴーがTikTokで使った曲欄</div>
     <div style="font-size:11px;opacity:.4;margin-bottom:14px" data-j="好きな曲を選んでSpotifyで聴こう" data-e="Pick a track and listen on Spotify" id="bgm-sub">好きな曲を選んでSpotifyで聴こう</div>
     <div class="bmt" id="bgm-list"></div>
@@ -412,7 +431,84 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 24px;display:fl
   <div class="cd cd-a"><div class="ai"><div class="aaw"><div class="aa" style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.3)">I</div><div class="ab"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div></div><div class="an">いくすわ</div><span class="art" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)" data-j="⚙️ 管理者" data-e="⚙️ Admin" id="ri">⚙️ 管理者</span><p class="ad" data-j="主にメンバー対応を担当しています。疑問や不安はいつでも声をかけてください！" data-e="Handles member support. Don't hesitate to reach out anytime!" id="di">主にメンバー対応を担当しています。疑問や不安はいつでも声をかけてください！</p></div></div>
 </div></section></div>
 
+<!-- POOPHUB -->
+<div class="page" id="pg-poophub">
+<section class="sww">
+  <div class="sh" style="margin-top:20px">
+    <div class="sl">— Roblox Scripts —</div>
+    <div class="st">PoopHub</div>
+    <p style="font-size:13px;opacity:.4;margin-top:14px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.85">UIフレームワーク・ゲーム拡張ツールなど、メンバーが開発したRobloxスクリプトの紹介ページ。</p>
+  </div>
+
+  <div class="ph-grid">
+    <div class="cd ph-card">
+      <div class="ph-tag">UI FRAMEWORK</div>
+      <div class="ph-ttl">OrionLib Dashboard 拡張モジュール</div>
+      <p class="ph-desc">OrionLib UIフレームワークをベースにしたダッシュボード拡張。PC/モバイル対応のステータス表示、グラデーションテーマシステム、背景暗転エフェクトを実装。</p>
+      <div class="ph-creators">
+        <span class="ph-chip">じつねこ</span>
+        <span class="ph-chip">いくすわ</span>
+      </div>
+    </div>
+
+    <div class="cd ph-card">
+      <div class="ph-tag">Game Tool</div>
+      <div class="ph-ttl">カスタム通知システム</div>
+      <p class="ph-desc">ゲーム内イベントに連動するスライド式通知UI。アニメーション・サウンド・キュー管理に対応した軽量モジュール。</p>
+      <div class="ph-creators">
+        <span class="ph-chip">いくすわ</span>
+        <span class="ph-chip">ゆずぴー</span>
+      </div>
+    </div>
+
+    <div class="cd ph-card">
+      <div class="ph-tag">UI Framework</div>
+      <div class="ph-ttl">設定メニュー・テンプレート</div>
+      <p class="ph-desc">タブ切り替え・トグル・スライダーをまとめた汎用設定メニューのテンプレートスクリプト。導入が簡単で他プロジェクトにも流用しやすい設計。</p>
+      <div class="ph-creators">
+        <span class="ph-chip">いくすわ</span>
+        <span class="ph-chip">じつねこ</span>
+      </div>
+    </div>
+
+    <div class="cd ph-card">
+      <div class="ph-tag">Game Tool</div>
+      <div class="ph-ttl">ステータスHUDモジュール</div>
+      <p class="ph-desc">HP・スタミナ・などをリアルタイムで表示するHUD。アニメーション付きバー表示とレスポンシブ対応。</p>
+      <div class="ph-creators">
+        <span class="ph-chip">雪見だいふくの空箱</span>
+        <span class="ph-chip">ゆずぴー</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ph-credits cd">
+    <div class="ph-credits-ttl">制作メンバー</div>
+    <div class="ph-credits-grid">
+      <div class="ph-credit-item"><div class="ph-credit-name">雪見だいふくの空箱</div></div>
+      <div class="ph-credit-item"><div class="ph-credit-name">いくすわ</div></div>
+      <div class="ph-credit-item"><div class="ph-credit-name">ゆずぴー</div></div>
+      <div class="ph-credit-item"><div class="ph-credit-name">じつねこ</div></div>
+    </div>
+  </div>
+</section>
+</div>
+
 <script>
+// ── Lucide icons ─────────────────────────────────────────
+if (typeof lucide !== 'undefined') lucide.createIcons();
+
+// ── Card mouse glow tracking ─────────────────────────────
+document.querySelectorAll('.cd').forEach(function(card) {
+  card.addEventListener('mousemove', function(e) {
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%';
+    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + '%';
+    card.style.setProperty('--mx', x);
+    card.style.setProperty('--my', y);
+  });
+});
+
 // ── Warning notice ───────────────────────────────────────
 function closeWarning() {
   document.getElementById('warning').classList.add('hide');
@@ -500,8 +596,8 @@ let isDark = true;
 function toggleTheme() {
   isDark = !isDark;
   document.body.classList.toggle('light', !isDark);
-  const btn = document.getElementById('theme-btn');
-  if (btn) btn.textContent = isDark ? '🌙' : '☀️';
+  const icon = document.getElementById('theme-icon');
+  if (icon) { icon.setAttribute('data-lucide', isDark ? 'moon' : 'sun'); if (typeof lucide !== 'undefined') lucide.createIcons(); }
   const sp = document.getElementById('splash');
   if (sp) sp.style.background = isDark ? '#080808' : '#f4f4f2';
 }
@@ -648,11 +744,12 @@ const weatherData = {
   snow: { icon: '❄️', ja: '雪',   en: 'Snow'  }
 };
 function updateWeatherLabel() {
-  const d = weatherData[weatherMode];
+  const icons = { none: 'sun', rain: 'cloud-rain', snow: 'snowflake' };
+  const labels = { none: { ja: '晴れ', en: 'Clear' }, rain: { ja: '雨', en: 'Rain' }, snow: { ja: '雪', en: 'Snow' } };
   const wi = document.getElementById('wi');
+  if (wi) { wi.setAttribute('data-lucide', icons[weatherMode]); if (typeof lucide !== 'undefined') lucide.createIcons(); }
   const wl = document.getElementById('wl');
-  if (wi) wi.textContent = d.icon;
-  if (wl) wl.textContent = d[lang === 'ja' ? 'ja' : 'en'];
+  if (wl) wl.textContent = labels[weatherMode][lang === 'ja' ? 'ja' : 'en'];
 }
 function cycleWeather() {
   const idx = weatherStates.indexOf(weatherMode);
